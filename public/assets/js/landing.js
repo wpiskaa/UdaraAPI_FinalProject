@@ -203,14 +203,253 @@ async function loadBackendStatistics() {
   } catch (err) {}
 }
 
+// ===================================================
+// 4. PRAY FOR INDONESIA — SOLIDARITAS & CANDLE WALL
+// ===================================================
+let candleCount = parseInt(localStorage.getItem('udara_candle_count')) || 4289;
+
+const INITIAL_PRAYERS = [
+  { name: 'Keluarga Rahmad (Palangka Raya)', text: 'Semoga hujan deras segera turun membasahi gambut Kalteng. Tetap kuat saudaraku & para relawan!', time: 'Baru saja' },
+  { name: 'Siti Aminah (Pekanbaru)', text: 'Doa kami dari Riau untuk seluruh petugas pemadam Manggala Agni yang bertaruh nyawa di garis api.', time: '2 menit lalu' },
+  { name: 'Wayan Suartana (Lombok)', text: 'Semoga lereng savana dan hutan kita lekas pulih. Jaga alam, jaga bumi Nusantara.', time: '8 menit lalu' },
+  { name: 'Markus Kogoya (Jayapura)', text: 'Salam solidaritas dari Papua untuk saudara-saudara kami di Kalimantan dan Sumatera. Kita bersama.', time: '15 menit lalu' },
+  { name: 'Rangga & Komunitas (Bandung)', text: 'Respect tak terhingga untuk seluruh pejuang pemadam kebakaran hutan di seluruh Indonesia! 🕯️🌲', time: '24 menit lalu' },
+];
+
+let prayersData = JSON.parse(localStorage.getItem('udara_prayers')) || INITIAL_PRAYERS;
+
+function initPrayersWall() {
+  const countEl = document.getElementById('candleCount');
+  if (countEl) countEl.textContent = candleCount.toLocaleString('id-ID');
+  renderPrayersList();
+}
+
+function renderPrayersList() {
+  const list = document.getElementById('prayerList');
+  if (!list) return;
+
+  list.innerHTML = prayersData.map(p => `
+    <div class="prayer-item">
+      <div class="prayer-item-top">
+        <span class="prayer-sender">🕊️ ${escapeHtml(p.name)}</span>
+        <span class="prayer-time">${p.time}</span>
+      </div>
+      <div class="prayer-text">"${escapeHtml(p.text)}"</div>
+    </div>
+  `).join('');
+}
+
+function lightCandle() {
+  candleCount++;
+  localStorage.setItem('udara_candle_count', candleCount);
+  const countEl = document.getElementById('candleCount');
+  if (countEl) countEl.textContent = candleCount.toLocaleString('id-ID');
+
+  const btn = document.getElementById('btnLightCandle');
+  if (btn) {
+    btn.innerHTML = '<span>✨ Lilin Doa Menyala (+1)</span>';
+    setTimeout(() => {
+      btn.innerHTML = '<span>✨ Nyalakan Lilin Doa & Respect</span>';
+    }, 1500);
+  }
+
+  showToast('🕯️ Terima kasih! Lilin doamu telah menyala untuk langit & hutan Indonesia.', 'success');
+}
+
+function submitPrayer(e) {
+  e.preventDefault();
+  const nameInput = document.getElementById('prayerName');
+  const textInput = document.getElementById('prayerText');
+
+  const name = nameInput.value.trim();
+  const text = textInput.value.trim();
+  if (!name || !text) return;
+
+  const newPrayer = {
+    name: name,
+    text: text,
+    time: 'Baru saja'
+  };
+
+  prayersData.unshift(newPrayer);
+  if (prayersData.length > 20) prayersData.pop();
+  localStorage.setItem('udara_prayers', JSON.stringify(prayersData));
+
+  renderPrayersList();
+  nameInput.value = '';
+  textInput.value = '';
+
+  showToast('🕊️ Doa dan pesan solidaritasmu berhasil dikirimkan!', 'success');
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>'"]/g, tag => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  }[tag] || tag));
+}
+
+// ===================================================
+// 5. RESPECT MINI MUSIC BOX PLAYER (RADIOHEAD - LET DOWN)
+// ===================================================
+let isMusicPlaying = false;
+let audioCtx = null;
+let masterGain = null;
+let currentVolume = 0.4;
+let musicInterval = null;
+
+// Let Down Acoustic Ambient Motif Notes (A - E - F#m - D chords in Hz)
+const LET_DOWN_NOTES = [
+  // Intro/Verse motif: A chord arpeggio
+  440.00, 554.37, 659.25, 880.00, 659.25, 554.37,
+  // E chord arpeggio
+  329.63, 493.88, 659.25, 783.99, 659.25, 493.88,
+  // F#m chord arpeggio
+  369.99, 440.00, 554.37, 739.99, 554.37, 440.00,
+  // D chord arpeggio
+  293.66, 440.00, 587.33, 739.99, 587.33, 440.00
+];
+
+function initAudioEngine() {
+  if (!audioCtx) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AudioContext();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.setValueAtTime(currentVolume, audioCtx.currentTime);
+    masterGain.connect(audioCtx.destination);
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+function playNote(freq, time, duration = 0.6) {
+  if (!audioCtx || !isMusicPlaying) return;
+
+  const osc = audioCtx.createOscillator();
+  const noteGain = audioCtx.createGain();
+
+  // Warm gentle ambient acoustic electric piano timbre
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, time);
+
+  noteGain.gain.setValueAtTime(0, time);
+  noteGain.gain.linearRampToValueAtTime(0.35, time + 0.04);
+  noteGain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+  osc.connect(noteGain);
+  noteGain.connect(masterGain);
+
+  osc.start(time);
+  osc.stop(time + duration);
+}
+
+function startLetDownArpeggio() {
+  if (!audioCtx) initAudioEngine();
+  let step = 0;
+
+  function scheduleNextNotes() {
+    if (!isMusicPlaying || !audioCtx) return;
+    const now = audioCtx.currentTime;
+    const noteFreq = LET_DOWN_NOTES[step % LET_DOWN_NOTES.length];
+    playNote(noteFreq, now, 0.85);
+
+    // Occasional gentle low bass root
+    if (step % 6 === 0) {
+      const bassFreq = noteFreq / 2;
+      playNote(bassFreq, now, 1.4);
+    }
+
+    step++;
+  }
+
+  scheduleNextNotes();
+  musicInterval = setInterval(scheduleNextNotes, 380);
+}
+
+function toggleMusic() {
+  const box = document.getElementById('musicBox');
+  const icon = document.getElementById('musicPlayIcon');
+  const ind = document.getElementById('musicLiveInd');
+
+  if (!isMusicPlaying) {
+    initAudioEngine();
+    isMusicPlaying = true;
+    startLetDownArpeggio();
+
+    if (box) box.classList.add('playing');
+    if (icon) icon.textContent = '⏸';
+    if (ind) {
+      ind.textContent = '● PLAYING';
+      ind.style.color = '#c8e86a';
+    }
+    showToast('🎵 Memutar: Radiohead — Let Down (Remastered) • Tribute for Indonesia', 'info');
+  } else {
+    isMusicPlaying = false;
+    if (musicInterval) clearInterval(musicInterval);
+
+    if (box) box.classList.remove('playing');
+    if (icon) icon.textContent = '▶';
+    if (ind) {
+      ind.textContent = '○ PAUSED';
+      ind.style.color = '#9cbca0';
+    }
+  }
+}
+
+function setVolume(val) {
+  currentVolume = parseFloat(val);
+  if (masterGain && audioCtx) {
+    masterGain.gain.setValueAtTime(currentVolume, audioCtx.currentTime);
+  }
+  const icon = document.getElementById('musicVolIcon');
+  if (icon) {
+    icon.textContent = currentVolume === 0 ? '🔇' : currentVolume < 0.5 ? '🔉' : '🔊';
+  }
+}
+
+function toggleMute() {
+  const slider = document.getElementById('musicVolSlider');
+  if (currentVolume > 0) {
+    slider.dataset.prevVol = currentVolume;
+    slider.value = 0;
+    setVolume(0);
+  } else {
+    const prev = slider.dataset.prevVol || 0.4;
+    slider.value = prev;
+    setVolume(prev);
+  }
+}
+
+// Gentle auto-play on first user interaction if not playing
+function setupAutoRespectMusic() {
+  function startOnInteraction() {
+    if (!isMusicPlaying) {
+      toggleMusic();
+    }
+    document.removeEventListener('click', startOnInteraction);
+    document.removeEventListener('keydown', startOnInteraction);
+  }
+
+  document.addEventListener('click', startOnInteraction, { once: true });
+  document.addEventListener('keydown', startOnInteraction, { once: true });
+}
+
 // Global Toast helper
 function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
   const toast = document.createElement('div');
   toast.className = `toast toast-${type}`;
-  toast.innerHTML = `<span>${type === 'success' ? '✅' : 'ℹ️'}</span><span>${message}</span>`;
-  document.getElementById('toastContainer').appendChild(toast);
+  toast.innerHTML = `<span>${type === 'success' ? '✅' : '🕯️'}</span><span>${message}</span>`;
+  container.appendChild(toast);
   setTimeout(() => {
     toast.style.animation = 'fadeOut 0.3s ease forwards';
     setTimeout(() => toast.remove(), 300);
-  }, 3500);
+  }, 4000);
 }
+
+// Initialize on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  initPrayersWall();
+  setupAutoRespectMusic();
+});
