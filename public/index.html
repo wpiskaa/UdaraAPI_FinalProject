@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SI-ASAP | UdaraAPI — Pusat Integrasi Data ISPU & Pemantauan Bencana Asap Indonesia</title>
+  <meta name="description" content="Infrastruktur REST API data Indeks Standar Pencemaran Udara (ISPU) dan pemantauan bencana kabut asap karhutla di 38 provinsi Indonesia." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/landing.css" />
+</head>
+<body>
+
+  <!-- STICKY ALERT BAR (C-GEM STYLE) -->
+  <div class="sticky-alert-bar">
+    <span class="sticky-alert-badge">Live Dispatch</span>
+    <span>⚠️ <strong>Siaga Bencana Asap Karhutla:</strong> Telemetri mendeteksi lonjakan polutan PM2.5 ekstrem di Palangka Raya (ISPU 432) dan Pekanbaru (ISPU 308).</span>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <div class="brand-icon-box">🌫️</div>
+        <div>
+          <span class="brand-title">UdaraAPI</span>
+          <span class="brand-subtitle">SI-ASAP Telemetry Gateway</span>
+        </div>
+      </a>
+
+      <div class="nav-links">
+        <a href="#stations" class="nav-link">Stasiun SPKU</a>
+        <a href="#sandbox" class="nav-link">API Sandbox</a>
+        <a href="#standards" class="nav-link">Standar Mutu ISPU</a>
+        <a href="#pricing" class="nav-link">Akses Developer</a>
+      </div>
+
+      <div class="nav-cta">
+        <a href="/login" class="btn btn-ghost btn-sm">Developer Login</a>
+        <a href="/login?tab=register" class="btn btn-primary btn-sm">Dapatkan API Key →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-wrap">
+        <div class="hero-badge-wrap">
+          <span class="cgem-badge">INISIATIF PEMANTAUAN UDARA TERPADU</span>
+        </div>
+
+        <h1 class="hero-headline font-display">
+          Infrastruktur Data Kualitas Udara &<br/>
+          <span class="accent-terracotta">Mitigasi Bencana Asap Karhutla</span>
+        </h1>
+
+        <p class="hero-mission-statement">
+          <strong>UdaraAPI</strong> adalah lapisan akuntabilitas dan telemetri terbuka untuk data pencemaran udara Indonesia: 
+          <em>endpoints yang dapat diakses secara terukur</em>, <em>konsentrasi polutan yang dapat dilacak</em>, dan <em>standar baku mutu lingkungan yang dapat diaudit</em> di 38 provinsi.
+        </p>
+
+        <div class="hero-actions">
+          <a href="/login?tab=register" class="btn btn-primary btn-lg">
+            <span>⚡ Buat Kunci API Gratis</span>
+          </a>
+          <a href="#sandbox" class="btn btn-ghost btn-lg">
+            <span>💻 Coba API Sandbox</span>
+          </a>
+          <a href="#stations" class="btn btn-ghost btn-lg">
+            <span>📡 Jelajahi 38 Stasiun</span>
+          </a>
+        </div>
+
+        <!-- LIVE HOTSPOT & ISPU DISPATCH BAR -->
+        <div class="dispatch-bar">
+          <div class="dispatch-header">
+            <div class="dispatch-title">
+              <span class="dispatch-dot"></span>
+              <span>Telemetri ISPU & Titik Panas Terkini (Live Feed)</span>
+            </div>
+            <span style="font-size:11px;font-family:var(--font-mono);color:var(--cgem-gray-muted)">BMKG & KLHK STANDARD</span>
+          </div>
+          <div class="dispatch-scroll" id="dispatchScroll">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS OVERVIEW SECTION -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-container-grid">
+        <div class="stat-metric-card">
+          <div class="stat-metric-val" id="statStationsNum">38</div>
+          <div class="stat-metric-label">Stasiun Pemantau (SPKU)</div>
+          <div class="stat-metric-sub">Tersebar di seluruh provinsi Indonesia</div>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-metric-val" id="statRecordsNum">65+</div>
+          <div class="stat-metric-label">Rekam Data Historis & Harian</div>
+          <div class="stat-metric-sub">Termasuk simulasi musim karhutla parah</div>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-metric-val">6 Polutan</div>
+          <div class="stat-metric-label">Parameter Udara Lengkap</div>
+          <div class="stat-metric-sub">PM2.5, PM10, SO2, CO, NO2, O3</div>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-metric-val">&lt; 40ms</div>
+          <div class="stat-metric-label">Kecepatan Respon RESTful</div>
+          <div class="stat-metric-sub">Serverless deployment di Vercel</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VERIFIED REGIONAL SLOTS SECTION (C-GEM SIGNATURE EXPANDABLE CARDS) -->
+  <section class="verified-section" id="stations">
+    <div class="container">
+      <div class="vp-heading-wrap">
+        <span class="cgem-badge cgem-badge-terracotta">ZONA PANTAUAN SPESIFIK</span>
+        <h2 class="vp-heading font-display">Stasiun Pemantau & Wilayah Karhutla Terpilih</h2>
+        <p>Integrasi langsung telemetri sensor gas dan partikulat pada wilayah terdampak kebakaran lahan dan kawasan urban.</p>
+      </div>
+
+      <!-- 4 Verified Project Slots -->
+      <div class="vp-row">
+        <!-- Slot 1: Palangka Raya Kalteng -->
+        <div class="vp-slot">
+          <div class="vp-card-image-box">
+            <img src="/assets/images/palangka_raya.jpg" alt="Palangka Raya Peatland Smoke" />
+            <div class="vp-badge-overlay">ZONA DARURAT ASAP</div>
+          </div>
+          <div class="vp-card-body">
+            <div>
+              <h3 class="vp-card-title">SPKU Palangka Raya Pahandut (Kalimantan Tengah)</h3>
+              <div class="vp-meta-item">📍 <strong>Wilayah:</strong> Lahan Gambut Palangka Raya</div>
+              <div class="vp-meta-item">⚠️ <strong>Parameter Kritis:</strong> Partikulat PM2.5 Pekat</div>
+              
+              <div class="vp-ispu-tag">
+                <div>
+                  <div style="font-size:11px;font-weight:700;color:var(--cgem-gray-muted)">INDEKS ISPU</div>
+                  <div style="font-size:12px;font-weight:800;color:#b91c1c">BERBAHAYA</div>
+                </div>
+                <div class="vp-ispu-tag-num text-berbahaya">432</div>
+              </div>
+            </div>
+
+            <div class="vp-sdg-row">
+              <div class="vp-sdg-label">Dampak & Kebijakan SDGs</div>
+              <div class="vp-sdg-badges">
+                <span class="vp-sdg-pill">SDG 3: Kesehatan</span>
+                <span class="vp-sdg-pill">SDG 13: Iklim</span>
+                <span class="vp-sdg-pill">SDG 15: Ekosistem</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slot 2: Pekanbaru Riau -->
+        <div class="vp-slot">
+          <div class="vp-card-image-box">
+            <img src="/assets/images/riau.jpg" alt="Riau Fire Haze" />
+            <div class="vp-badge-overlay">ZONA KARHUTLA RIAU</div>
+          </div>
+          <div class="vp-card-body">
+            <div>
+              <h3 class="vp-card-title">SPKU Pekanbaru Tampan (Provinsi Riau)</h3>
+              <div class="vp-meta-item">📍 <strong>Wilayah:</strong> Dataran Rendah Riau</div>
+              <div class="vp-meta-item">⚠️ <strong>Parameter Kritis:</strong> PM2.5 & SO2</div>
+              
+              <div class="vp-ispu-tag">
+                <div>
+                  <div style="font-size:11px;font-weight:700;color:var(--cgem-gray-muted)">INDEKS ISPU</div>
+                  <div style="font-size:12px;font-weight:800;color:#b91c1c">BERBAHAYA</div>
+                </div>
+                <div class="vp-ispu-tag-num text-berbahaya">308</div>
+              </div>
+            </div>
+
+            <div class="vp-sdg-row">
+              <div class="vp-sdg-label">Dampak & Kebijakan SDGs</div>
+              <div class="vp-sdg-badges">
+                <span class="vp-sdg-pill">SDG 3: Kesehatan</span>
+                <span class="vp-sdg-pill">SDG 13: Iklim</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slot 3: Palembang Sumsel -->
+        <div class="vp-slot">
+          <div class="vp-card-image-box">
+            <img src="/assets/images/palembang.jpg" alt="Sumatera Selatan Fire" />
+            <div class="vp-badge-overlay">ZONA RAWA GAMBUT</div>
+          </div>
+          <div class="vp-card-body">
+            <div>
+              <h3 class="vp-card-title">SPKU Palembang Kalidoni (Sumatera Selatan)</h3>
+              <div class="vp-meta-item">📍 <strong>Wilayah:</strong> Lahan Gambut OKI & Palembang</div>
+              <div class="vp-meta-item">⚠️ <strong>Parameter Kritis:</strong> PM2.5 & Karbon CO</div>
+              
+              <div class="vp-ispu-tag">
+                <div>
+                  <div style="font-size:11px;font-weight:700;color:var(--cgem-gray-muted)">INDEKS ISPU</div>
+                  <div style="font-size:12px;font-weight:800;color:#b91c1c">BERBAHAYA</div>
+                </div>
+                <div class="vp-ispu-tag-num text-berbahaya">375</div>
+              </div>
+            </div>
+
+            <div class="vp-sdg-row">
+              <div class="vp-sdg-label">Dampak & Kebijakan SDGs</div>
+              <div class="vp-sdg-badges">
+                <span class="vp-sdg-pill">SDG 3: Kesehatan</span>
+                <span class="vp-sdg-pill">SDG 15: Lahan</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slot 4: Bundaran HI DKI Jakarta -->
+        <div class="vp-slot">
+          <div class="vp-card-image-box">
+            <img src="/assets/images/jakarta.jpg" alt="Jakarta Urban Smog" />
+            <div class="vp-badge-overlay" style="background:#b85c2a">ZONA URBAN SMOG</div>
+          </div>
+          <div class="vp-card-body">
+            <div>
+              <h3 class="vp-card-title">SPKU Bundaran HI (DKI Jakarta Pusat)</h3>
+              <div class="vp-meta-item">📍 <strong>Wilayah:</strong> Megapolitan Jabodetabek</div>
+              <div class="vp-meta-item">🚗 <strong>Parameter Kritis:</strong> Emisi PM10 & NO2</div>
+              
+              <div class="vp-ispu-tag">
+                <div>
+                  <div style="font-size:11px;font-weight:700;color:var(--cgem-gray-muted)">INDEKS ISPU</div>
+                  <div style="font-size:12px;font-weight:800;color:#b85c2a">TIDAK SEHAT</div>
+                </div>
+                <div class="vp-ispu-tag-num text-tidak-sehat">128</div>
+              </div>
+            </div>
+
+            <div class="vp-sdg-row">
+              <div class="vp-sdg-label">Dampak & Kebijakan SDGs</div>
+              <div class="vp-sdg-badges">
+                <span class="vp-sdg-pill">SDG 11: Kota Berkelanjutan</span>
+                <span class="vp-sdg-pill">SDG 3: Kesehatan</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- API LIVE SANDBOX / CONSOLE SECTION -->
+  <section class="sandbox-section" id="sandbox">
+    <div class="container">
+      <div class="vp-heading-wrap">
+        <span class="cgem-badge">DEVELOPER LIVE SANDBOX</span>
+        <h2 class="vp-heading font-display">Uji Coba Integrasi Endpoint REST API</h2>
+        <p>Jalankan panggilan API interaktif untuk mendapatkan struktur JSON data stasiun dan kualitas udara.</p>
+      </div>
+
+      <div class="sandbox-terminal">
+        <!-- Top bar with language tabs -->
+        <div class="sandbox-topbar">
+          <div class="sandbox-tabs">
+            <button class="s-tab active" onclick="setLang('curl', this)">cURL</button>
+            <button class="s-tab" onclick="setLang('js', this)">JavaScript (fetch)</button>
+            <button class="s-tab" onclick="setLang('python', this)">Python (requests)</button>
+            <button class="s-tab" onclick="setLang('php', this)">PHP (cURL)</button>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="background:#222;color:#fff;border-color:#444" onclick="copySandboxCode()">📋 Salin Cuplikan</button>
+        </div>
+
+        <div class="sandbox-grid">
+          <!-- Endpoint selector sidebar -->
+          <div class="sandbox-sidebar">
+            <button class="s-endpoint-btn active" onclick="selectEndpointPreset('latest', this)">
+              <span class="s-method">GET</span>
+              <span class="s-path">/api/v1/records/latest</span>
+              <span class="s-desc">Kondisi udara terkini per stasiun</span>
+            </button>
+
+            <button class="s-endpoint-btn" onclick="selectEndpointPreset('berbahaya', this)">
+              <span class="s-method">GET</span>
+              <span class="s-path">/api/v1/records/berbahaya</span>
+              <span class="s-desc">Zona Sangat Tidak Sehat & Karhutla</span>
+            </button>
+
+            <button class="s-endpoint-btn" onclick="selectEndpointPreset('kalimantan', this)">
+              <span class="s-method">GET</span>
+              <span class="s-path">/api/v1/stations?province=Kalimantan</span>
+              <span class="s-desc">Filter stasiun per wilayah</span>
+            </button>
+
+            <button class="s-endpoint-btn" onclick="selectEndpointPreset('stats', this)">
+              <span class="s-method" style="color:#60a5fa">GET (PUB)</span>
+              <span class="s-path">/api/v1/stats</span>
+              <span class="s-desc">Statistik platform (tanpa key)</span>
+            </button>
+          </div>
+
+          <!-- Code / Response View -->
+          <div class="sandbox-screen">
+            <div class="sandbox-url-row">
+              <span class="s-method" style="background:#253325;padding:4px 8px;border-radius:4px" id="lblMethod">GET</span>
+              <span class="s-url-text" id="lblUrl">https://udara-api.vercel.app/api/v1/records/latest</span>
+              <button class="btn btn-primary btn-sm" id="btnRunSandbox" onclick="runSandboxRequest()">
+                <span>⚡ Eksekusi Request</span>
+              </button>
+            </div>
+
+            <div class="sandbox-meta-row">
+              <div>STATUS: <span style="color:#c8e86a;font-weight:700">200 OK</span></div>
+              <div>LATENCY: <span style="color:#fea419;font-weight:700" id="lblLatency">28ms</span></div>
+              <div>PAYLOAD: <span style="color:#a8b3cf" id="lblSize">1.2 KB</span></div>
+            </div>
+
+            <pre class="sandbox-code-view" id="sandboxOutput">// Menyiapkan contoh respon...</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STANDAR MUTU ISPU & KESEHATAN SECTION -->
+  <section class="verified-section" id="standards" style="background:#ffffff">
+    <div class="container">
+      <div class="vp-heading-wrap">
+        <span class="cgem-badge">STANDAR LINGKUNGAN HIDUP</span>
+        <h2 class="vp-heading font-display">Tabel Klasifikasi Baku Mutu ISPU Indonesia</h2>
+        <p>Berdasarkan Peraturan Menteri Lingkungan Hidup dan Kehutanan (Permen LHK No. P.14/2020).</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(5, 1fr);gap:14px;margin-top:30px">
+        <div style="background:#f0f7ee;border:1.5px solid #2d5a27;padding:20px 16px;border-radius:8px;text-align:center">
+          <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:#2d5a27">0–50</div>
+          <div style="font-size:12px;font-weight:800;color:#2d5a27;margin:6px 0;letter-spacing:0.05em">BAIK</div>
+          <p style="font-size:12px;color:var(--cgem-gray-muted)">Kualitas udara sangat memuaskan, tidak ada dampak kesehatan.</p>
+        </div>
+
+        <div style="background:#fef9e7;border:1.5px solid #b27a00;padding:20px 16px;border-radius:8px;text-align:center">
+          <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:#b27a00">51–100</div>
+          <div style="font-size:12px;font-weight:800;color:#b27a00;margin:6px 0;letter-spacing:0.05em">SEDANG</div>
+          <p style="font-size:12px;color:var(--cgem-gray-muted)">Dapat diterima, sedikit pengaruh pada kelompok sensitif.</p>
+        </div>
+
+        <div style="background:#fef0e8;border:1.5px solid #b85c2a;padding:20px 16px;border-radius:8px;text-align:center">
+          <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:#b85c2a">101–199</div>
+          <div style="font-size:12px;font-weight:800;color:#b85c2a;margin:6px 0;letter-spacing:0.05em">TIDAK SEHAT</div>
+          <p style="font-size:12px;color:var(--cgem-gray-muted)">Merugikan masyarakat umum. Wajib memakai masker N95.</p>
+        </div>
+
+        <div style="background:#fee2e2;border:1.5px solid #dc2626;padding:20px 16px;border-radius:8px;text-align:center">
+          <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:#dc2626">200–299</div>
+          <div style="font-size:12px;font-weight:800;color:#dc2626;margin:6px 0;letter-spacing:0.05em">SANGAT T.S.</div>
+          <p style="font-size:12px;color:var(--cgem-gray-muted)">Risiko kesehatan serius bagi seluruh segmen masyarakat.</p>
+        </div>
+
+        <div style="background:#fdf2f2;border:1.5px solid #741212;padding:20px 16px;border-radius:8px;text-align:center">
+          <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:#741212">≥ 300</div>
+          <div style="font-size:12px;font-weight:800;color:#741212;margin:6px 0;letter-spacing:0.05em">BERBAHAYA</div>
+          <p style="font-size:12px;color:var(--cgem-gray-muted)">Kondisi darurat asap pekat, berbahaya bagi seluruh populasi.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING TIERS SECTION -->
+  <section class="pricing-section" id="pricing">
+    <div class="container">
+      <div class="vp-heading-wrap">
+        <span class="cgem-badge">SKEMA PENGGUNAAN DEVELOPER</span>
+        <h2 class="vp-heading font-display">Akses Terukur & Transparan</h2>
+        <p>Mulai gratis untuk keperluan akademis & evaluasi, upgrade saat aplikasi melayani pengguna skala nasional.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- Free Tier -->
+        <div class="pricing-card">
+          <div>
+            <div class="plan-name font-display">Starter Free</div>
+            <div class="plan-sub">Untuk prototipe tugas akhir, riset akademis, & developer perorangan.</div>
+            <div class="plan-price-wrap">
+              <span class="plan-amount">Rp 0</span>
+              <span class="plan-freq">/ selamanya</span>
+            </div>
+            <ul class="plan-features-list">
+              <li>✅ 100 Request / Hari</li>
+              <li>✅ 2 API Keys Aktif</li>
+              <li>✅ Seluruh Endpoint Stasiun & ISPU</li>
+              <li>✅ Akses Data Historis 30 Hari</li>
+              <li>❌ Dedicated Webhook Relay</li>
+            </ul>
+          </div>
+          <a href="/login?tab=register" class="btn btn-ghost btn-full">Daftar Akun Gratis</a>
+        </div>
+
+        <!-- Pro Tier -->
+        <div class="pricing-card featured">
+          <div class="plan-badge">Paling Diminati</div>
+          <div>
+            <div class="plan-name font-display">Production Pro</div>
+            <div class="plan-sub">Untuk aplikasi mobile monitoring cuaca & platform peringatan dini.</div>
+            <div class="plan-price-wrap">
+              <span class="plan-amount">Rp 99K</span>
+              <span class="plan-freq">/ bulan</span>
+            </div>
+            <ul class="plan-features-list">
+              <li>✅ 10.000 Request / Hari</li>
+              <li>✅ 10 API Keys Aktif</li>
+              <li>✅ Seluruh Endpoint Stasiun & ISPU</li>
+              <li>✅ Akses Data Historis Penuh</li>
+              <li>✅ Prioritas Latensi & Analytics</li>
+            </ul>
+          </div>
+          <a href="/login?tab=register" class="btn btn-primary btn-full">Mulai Paket Pro →</a>
+        </div>
+
+        <!-- Enterprise Tier -->
+        <div class="pricing-card">
+          <div>
+            <div class="plan-name font-display">Enterprise & Gov</div>
+            <div class="plan-sub">Untuk instansi BNPB, dinas kesehatan, & portal publik nasional.</div>
+            <div class="plan-price-wrap">
+              <span class="plan-amount">Custom</span>
+            </div>
+            <ul class="plan-features-list">
+              <li>✅ Unlimited Request Quota</li>
+              <li>✅ Unlimited API Keys</li>
+              <li>✅ Dedicated Raw Telemetry Feed</li>
+              <li>✅ Perjanjian SLA 99.99% Uptime</li>
+              <li>✅ 24/7 Technical Support</li>
+            </ul>
+          </div>
+          <a href="mailto:support@udara-api.id" class="btn btn-ghost btn-full">Hubungi Tim Teknis</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER (C-GEM FOREST GREEN) -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <span style="font-size:24px">🌫️</span>
+            <span style="font-family:var(--font-display);font-size:22px;font-weight:800;color:#ffffff">UdaraAPI · SI-ASAP</span>
+          </div>
+          <p style="font-size:14px;color:#d2ebd5;line-height:1.7;max-width:400px">
+            Pusat penyedia antarmuka data kualitas udara dan mitigasi asap karhutla Indonesia. Dikembangkan sebagai proyek akhir mata kuliah Pemrograman Web Lanjut (PWS).
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigasi Portal</h4>
+          <a href="#stations">38 Stasiun SPKU</a>
+          <a href="#sandbox">Developer Sandbox</a>
+          <a href="#standards">Baku Mutu ISPU</a>
+          <a href="/login">Dashboard Developer</a>
+          <a href="/login?tab=register">Buat Kunci API</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>Sumber Data Resmi</h4>
+          <a href="https://ispu.menlhk.go.id" target="_blank" rel="noopener">Kementerian LHK (ISPU Net)</a>
+          <a href="https://www.bmkg.go.id" target="_blank" rel="noopener">BMKG Indonesia</a>
+          <a href="https://bnpb.go.id" target="_blank" rel="noopener">Badan Penanggulangan Bencana (BNPB)</a>
+          <a href="https://brgm.go.id" target="_blank" rel="noopener">Badan Restorasi Gambut & Mangrove</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 UdaraAPI · Final Project Pemrograman Web Lanjut (PWS) · Semester Antara</span>
+        <span>Tech Stack: Express.js · PostgreSQL / Supabase · JWT Authentication · Vercel</span>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toastContainer"></div>
+
+  <script src="/assets/js/landing.js"></script>
+</body>
+</html>

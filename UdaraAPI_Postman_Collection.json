@@ -1,0 +1,363 @@
+{
+  "info": {
+    "_postman_id": "udaraapi-pws-final-project",
+    "name": "UdaraAPI (SI-ASAP) — PWS Final Project Collection",
+    "description": "Koleksi Postman resmi untuk pengujian seluruh REST API UdaraAPI (SaaS Kualitas Udara & Mitigasi Asap Indonesia).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "api_key",
+      "value": "ck_live_YOUR_KEY_HERE",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Public Endpoints",
+      "item": [
+        {
+          "name": "GET Platform Stats (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "stats"]
+            },
+            "description": "Mengambil ringkasan statistik platform UdaraAPI tanpa memerlukan API key."
+          }
+        },
+        {
+          "name": "GET API Catalog Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Authentication (JWT)",
+      "item": [
+        {
+          "name": "POST Register Developer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('jwt_token', jsonData.data.token);",
+                  "    console.log('JWT Token set successfully');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mahasiswa Penguji\",\n  \"email\": \"penguji@kampus.ac.id\",\n  \"password\": \"PasswordRahasia123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "POST Login Developer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('jwt_token', jsonData.data.token);",
+                  "    console.log('JWT Token updated after login');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"penguji@kampus.ac.id\",\n  \"password\": \"PasswordRahasia123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "GET My Profile (JWT Protected)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Dashboard & API Key Management",
+      "item": [
+        {
+          "name": "POST Create API Key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.data && jsonData.data.api_key) {",
+                  "    pm.collectionVariables.set('api_key', jsonData.data.api_key);",
+                  "    console.log('API Key set to:', jsonData.data.api_key);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key_name\": \"Postman Testing Client\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/dashboard/keys",
+              "host": ["{{base_url}}"],
+              "path": ["dashboard", "keys"]
+            }
+          }
+        },
+        {
+          "name": "GET List My API Keys",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/dashboard/keys",
+              "host": ["{{base_url}}"],
+              "path": ["dashboard", "keys"]
+            }
+          }
+        },
+        {
+          "name": "GET Usage Analytics & Request Logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/dashboard/usage",
+              "host": ["{{base_url}}"],
+              "path": ["dashboard", "usage"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Air Quality & Stations API (X-API-Key Protected)",
+      "item": [
+        {
+          "name": "GET All Stations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/stations?limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "stations"],
+              "query": [
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Stations Filtered by Province",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/stations?province=Kalimantan",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "stations"],
+              "query": [
+                { "key": "province", "value": "Kalimantan" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Provinces List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/stations/provinces",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "stations", "provinces"]
+            }
+          }
+        },
+        {
+          "name": "GET Latest Snapshot All Stations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/records/latest",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "records", "latest"]
+            }
+          }
+        },
+        {
+          "name": "GET Dangerous Air Quality Records (BERBAHAYA & SANGAT T.S.)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/records/berbahaya?limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "records", "berbahaya"],
+              "query": [
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Air Quality Records with Filter & Sort",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/records?kategori=BERBAHAYA&sort=ispu&order=desc",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "records"],
+              "query": [
+                { "key": "kategori", "value": "BERBAHAYA" },
+                { "key": "sort", "value": "ispu" },
+                { "key": "order", "value": "desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Test Without API Key (Expect 401 Unauthorized)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/records",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "records"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

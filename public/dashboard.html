@@ -1,0 +1,435 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — UdaraAPI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/dashboard.css" />
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="/" class="sidebar-logo">
+        <span class="logo-icon">🌫️</span>
+        <span class="logo-text">UdaraAPI</span>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="overview" onclick="switchPage('overview', this)">
+        <span class="nav-icon">📊</span>
+        <span>Overview</span>
+      </a>
+      <a href="#" class="nav-item" data-page="keys" onclick="switchPage('keys', this)">
+        <span class="nav-icon">🔑</span>
+        <span>API Keys</span>
+      </a>
+      <a href="#" class="nav-item" data-page="usage" onclick="switchPage('usage', this)">
+        <span class="nav-icon">📈</span>
+        <span>Usage</span>
+      </a>
+      <a href="#" class="nav-item" data-page="docs" onclick="switchPage('docs', this)">
+        <span class="nav-icon">📖</span>
+        <span>API Docs</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info" id="userInfo">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <div class="user-details">
+          <div class="user-name" id="userName">Loading...</div>
+          <div class="user-plan" id="userPlanBadge"><span class="badge badge-free">free</span></div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">↩ Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+        <div class="page-title" id="pageTitle">Overview</div>
+      </div>
+      <div class="topbar-right">
+        <a href="/" class="btn btn-ghost btn-sm">← Homepage</a>
+      </div>
+    </div>
+
+    <!-- PAGE: OVERVIEW -->
+    <div class="page active" id="page-overview">
+      <div class="page-header">
+        <h1 class="greeting" id="greeting">Good evening! 👋</h1>
+        <p class="greeting-sub">Berikut ringkasan statistik dan aktivitas akun UdaraAPI kamu.</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-widget">
+          <div class="stat-widget-icon">📡</div>
+          <div class="stat-widget-body">
+            <div class="stat-widget-value" id="totalRequests">—</div>
+            <div class="stat-widget-label">Total Requests</div>
+          </div>
+        </div>
+        <div class="stat-widget">
+          <div class="stat-widget-icon">🕐</div>
+          <div class="stat-widget-body">
+            <div class="stat-widget-value" id="requestsToday">—</div>
+            <div class="stat-widget-label">Requests Today</div>
+          </div>
+        </div>
+        <div class="stat-widget">
+          <div class="stat-widget-icon">🔑</div>
+          <div class="stat-widget-body">
+            <div class="stat-widget-value" id="activeKeys">—</div>
+            <div class="stat-widget-label">API Keys</div>
+          </div>
+        </div>
+        <div class="stat-widget">
+          <div class="stat-widget-icon">⚡</div>
+          <div class="stat-widget-body">
+            <div class="stat-widget-value" id="planLimit">100/day</div>
+            <div class="stat-widget-label">Rate Limit</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <div class="content-card">
+          <div class="card-header">
+            <div class="card-title">Requests (Last 7 Days)</div>
+          </div>
+          <div class="chart-container" id="chartContainer">
+            <canvas id="usageChart"></canvas>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <div class="card-header">
+            <div class="card-title">Quick Start</div>
+          </div>
+          <div class="quickstart">
+            <div class="qs-step">
+              <div class="qs-num">1</div>
+              <div class="qs-body">
+                <div class="qs-title">Get your API Key</div>
+                <div class="qs-desc">Go to <a href="#" onclick="switchPage('keys')">API Keys</a> and create your first key.</div>
+              </div>
+            </div>
+            <div class="qs-step">
+              <div class="qs-num">2</div>
+              <div class="qs-body">
+                <div class="qs-title">Make your first request</div>
+                <div class="qs-desc">Use X-API-Key header with your key.</div>
+              </div>
+            </div>
+            <div class="qs-step">
+              <div class="qs-num">3</div>
+              <div class="qs-body">
+                <div class="qs-title">Build something awesome</div>
+                <div class="qs-desc">Check the <a href="#" onclick="switchPage('docs')">API Docs</a> for all available endpoints.</div>
+              </div>
+            </div>
+          </div>
+          <div class="quickstart-code">
+            <div class="code-label">Example Request</div>
+            <div class="code-block">
+              <code id="quickstartCode">curl -H "X-API-Key: YOUR_KEY" \
+  https://udara-api.vercel.app/api/v1/records/latest</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: API KEYS -->
+    <div class="page" id="page-keys">
+      <div class="page-header">
+        <h1>API Keys</h1>
+        <p class="page-desc">Manage your API keys. Keep them secret — treat them like passwords.</p>
+      </div>
+
+      <div class="keys-toolbar">
+        <button class="btn btn-primary" onclick="openCreateKeyModal()">
+          + Create New Key
+        </button>
+        <div class="keys-info" id="keysInfo">Loading...</div>
+      </div>
+
+      <div class="keys-list" id="keysList">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <span>Loading API keys...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: USAGE -->
+    <div class="page" id="page-usage">
+      <div class="page-header">
+        <h1>Usage Analytics</h1>
+        <p class="page-desc">Monitor your API consumption and performance metrics.</p>
+      </div>
+
+      <div class="stats-row" id="usageStats">
+        <div class="stat-widget">
+          <div class="stat-widget-icon">📡</div>
+          <div class="stat-widget-body">
+            <div class="stat-widget-value" id="u-totalRequests">—</div>
+            <div class="stat-widget-label">Total Requests</div>
+          </div>
+        </div>
+        <div class="stat-widget">
+          <div class="stat-widget-icon">📅</div>
+          <div class="stat-widget-body">
+            <div class="stat-widget-value" id="u-today">—</div>
+            <div class="stat-widget-label">Today</div>
+          </div>
+        </div>
+        <div class="stat-widget">
+          <div class="stat-widget-icon">🔑</div>
+          <div class="stat-widget-body">
+            <div class="stat-widget-value" id="u-keys">—</div>
+            <div class="stat-widget-label">Active Keys</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-grid-1">
+        <div class="content-card">
+          <div class="card-header">
+            <div class="card-title">Daily Requests (Last 7 Days)</div>
+          </div>
+          <div class="chart-container">
+            <canvas id="usageChart2"></canvas>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <div class="card-header">
+            <div class="card-title">Top Endpoints</div>
+          </div>
+          <div id="topEndpoints">
+            <div style="text-align:center;color:var(--color-text-3);padding:40px 0">
+              No usage data yet. Start making API calls!
+            </div>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <div class="card-header">
+            <div class="card-title">Usage per Key</div>
+          </div>
+          <div id="perKeyUsage"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: DOCS -->
+    <div class="page" id="page-docs">
+      <div class="page-header">
+        <h1>API Documentation</h1>
+        <p class="page-desc">Complete reference for all UdaraAPI endpoints.</p>
+      </div>
+
+      <div class="docs-container">
+        <div class="doc-section">
+          <h2>Authentication</h2>
+          <p>All API endpoints (except <code>/api/v1/stats</code>) require an API key. Pass it as a header:</p>
+          <div class="code-block"><code>X-API-Key: ck_live_your_api_key_here</code></div>
+          <p>Or as a query parameter:</p>
+          <div class="code-block"><code>GET /api/v1/records?api_key=ck_live_your_key</code></div>
+        </div>
+
+        <div class="doc-section">
+          <h2>📡 Stasiun Pemantau (Stations)</h2>
+
+          <div class="doc-endpoint">
+            <div class="doc-ep-header">
+              <span class="method get">GET</span>
+              <code>/api/v1/stations</code>
+              <span class="doc-ep-desc">Daftar semua stasiun pemantau</span>
+            </div>
+            <table class="param-table">
+              <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td>page</td><td>integer</td><td>1</td><td>Page number</td></tr>
+                <tr><td>limit</td><td>integer</td><td>50</td><td>Per page (max 100)</td></tr>
+                <tr><td>province</td><td>string</td><td>—</td><td>Filter provinsi (e.g. Kalimantan Tengah, Riau)</td></tr>
+                <tr><td>city</td><td>string</td><td>—</td><td>Filter kota (e.g. Palangka Raya, Pekanbaru)</td></tr>
+                <tr><td>search</td><td>string</td><td>—</td><td>Cari nama/kota/provinsi</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="doc-endpoint">
+            <div class="doc-ep-header">
+              <span class="method get">GET</span>
+              <code>/api/v1/stations/provinces</code>
+              <span class="doc-ep-desc">Daftar seluruh provinsi yang memiliki stasiun</span>
+            </div>
+          </div>
+
+          <div class="doc-endpoint">
+            <div class="doc-ep-header">
+              <span class="method get">GET</span>
+              <code>/api/v1/stations/:id</code>
+              <span class="doc-ep-desc">Detail stasiun spesifik</span>
+            </div>
+          </div>
+
+          <div class="doc-endpoint">
+            <div class="doc-ep-header">
+              <span class="method get">GET</span>
+              <code>/api/v1/stations/:id/records</code>
+              <span class="doc-ep-desc">Riwayat pembacaan kualitas udara stasiun</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <h2>🌫️ Data Kualitas Udara (Records)</h2>
+
+          <div class="doc-endpoint">
+            <div class="doc-ep-header">
+              <span class="method get">GET</span>
+              <code>/api/v1/records</code>
+              <span class="doc-ep-desc">Daftar data ISPU dengan filter lengkap</span>
+            </div>
+            <table class="param-table">
+              <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td>page</td><td>integer</td><td>1</td><td>Page number</td></tr>
+                <tr><td>limit</td><td>integer</td><td>20</td><td>Per page (max 100)</td></tr>
+                <tr><td>kategori</td><td>string</td><td>—</td><td>BAIK, SEDANG, TIDAK SEHAT, SANGAT TIDAK SEHAT, BERBAHAYA</td></tr>
+                <tr><td>province</td><td>string</td><td>—</td><td>Filter provinsi</td></tr>
+                <tr><td>station_id</td><td>integer</td><td>—</td><td>Filter stasiun ID</td></tr>
+                <tr><td>tanggal_mulai</td><td>YYYY-MM-DD</td><td>—</td><td>Tanggal awal</td></tr>
+                <tr><td>tanggal_akhir</td><td>YYYY-MM-DD</td><td>—</td><td>Tanggal akhir</td></tr>
+                <tr><td>sort</td><td>string</td><td>tanggal</td><td>tanggal, ispu, pm25, pm10</td></tr>
+                <tr><td>order</td><td>string</td><td>desc</td><td>asc or desc</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="doc-endpoint">
+            <div class="doc-ep-header">
+              <span class="method get">GET</span>
+              <code>/api/v1/records/latest</code>
+              <span class="doc-ep-desc">Kondisi udara terkini (snapshot 1 record per stasiun)</span>
+            </div>
+          </div>
+
+          <div class="doc-endpoint">
+            <div class="doc-ep-header">
+              <span class="method get">GET</span>
+              <code>/api/v1/records/berbahaya</code>
+              <span class="doc-ep-desc">Hanya data berkategori SANGAT TIDAK SEHAT & BERBAHAYA</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <h2>🏷️ Platform Stats</h2>
+          <div class="doc-endpoint">
+            <div class="doc-ep-header">
+              <span class="method get">GET</span>
+              <code>/api/v1/stats</code>
+              <span class="doc-ep-desc">Statistik platform (Public — Bebas API Key)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <h2>Response Format</h2>
+          <p>All responses follow this standard format:</p>
+          <div class="code-block"><code>{
+  "success": true,
+  "data": [...],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 65,
+    "total_pages": 4,
+    "has_next": true,
+    "has_prev": false
+  }
+}</code></div>
+        </div>
+
+        <div class="doc-section">
+          <h2>Error Codes</h2>
+          <table class="param-table">
+            <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td>400</td><td>Bad Request — Invalid parameters</td></tr>
+              <tr><td>401</td><td>Unauthorized — Missing or invalid API key / JWT</td></tr>
+              <tr><td>403</td><td>Forbidden — Key deactivated or account suspended</td></tr>
+              <tr><td>404</td><td>Not Found — Resource does not exist</td></tr>
+              <tr><td>429</td><td>Too Many Requests — Rate limit exceeded</td></tr>
+              <tr><td>500</td><td>Internal Server Error</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- CREATE KEY MODAL -->
+  <div class="modal-overlay" id="createKeyModal">
+    <div class="modal-card">
+      <div class="modal-title">🔑 Create API Key</div>
+      <div class="modal-subtitle">Give your key a descriptive name so you can identify it later.</div>
+      <form onsubmit="handleCreateKey(event)">
+        <div class="form-group" style="margin-bottom:20px">
+          <label class="form-label">Key Name</label>
+          <input type="text" class="form-input" id="newKeyName" placeholder="e.g., My App, Production, Testing" required minlength="2" maxlength="100" />
+        </div>
+        <div style="display:flex;gap:12px">
+          <button type="button" class="btn btn-ghost btn-full" onclick="closeModal('createKeyModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-full" id="createKeyBtn">Create Key</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- VIEW KEY MODAL (show full key once) -->
+  <div class="modal-overlay" id="viewKeyModal">
+    <div class="modal-card">
+      <div class="modal-title">✅ API Key Created!</div>
+      <div class="modal-subtitle">Copy your API key now. For security, it won't be shown in full again.</div>
+      <div class="new-key-display" id="newKeyDisplay"></div>
+      <div style="display:flex;gap:12px;margin-top:20px">
+        <button class="btn btn-primary btn-full" onclick="copyNewKey()">📋 Copy Key</button>
+        <button class="btn btn-ghost btn-full" onclick="closeModal('viewKeyModal')">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM MODAL -->
+  <div class="modal-overlay" id="deleteKeyModal">
+    <div class="modal-card">
+      <div class="modal-title">⚠️ Delete API Key</div>
+      <div class="modal-subtitle">Are you sure? This action cannot be undone. Any apps using this key will stop working.</div>
+      <input type="hidden" id="deleteKeyId" />
+      <div style="display:flex;gap:12px;margin-top:24px">
+        <button class="btn btn-ghost btn-full" onclick="closeModal('deleteKeyModal')">Cancel</button>
+        <button class="btn btn-danger btn-full" onclick="confirmDeleteKey()">Delete Key</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer"></div>
+
+  <script src="/assets/js/dashboard.js"></script>
+</body>
+</html>

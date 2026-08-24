@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — UdaraAPI</title>
+  <meta name="description" content="Login atau buat akun UdaraAPI untuk mendapatkan API Key kualitas udara Indonesia." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <style>
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: var(--cgem-sage-bg);
+      position: relative;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      background: #ffffff;
+      border: 1.5px solid var(--cgem-gray-border);
+      border-radius: 14px;
+      padding: 40px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 16px 40px rgba(31, 90, 44, 0.08);
+    }
+
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+      text-decoration: none;
+    }
+
+    .auth-logo-icon { font-size: 26px; }
+
+    .auth-logo-text {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--cgem-forest);
+    }
+
+    .auth-tabs {
+      display: flex;
+      background: var(--cgem-cream-bg);
+      border: 1px solid var(--cgem-gray-border);
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--cgem-gray-muted);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+      background: none;
+      border: none;
+      font-family: var(--font-sans);
+    }
+
+    .auth-tab.active {
+      background: #ffffff;
+      color: var(--cgem-forest);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .auth-form-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .auth-form-subtitle {
+      font-size: 14px;
+      color: var(--color-text-2);
+      margin-bottom: 8px;
+    }
+
+    .auth-submit {
+      margin-top: 8px;
+    }
+
+    .auth-error {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #f87171;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      display: none;
+    }
+
+    .auth-error.visible { display: block; }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--color-text-3);
+      font-size: 13px;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border);
+    }
+
+    .auth-back {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 14px;
+      color: var(--color-text-3);
+    }
+
+    .auth-back a { color: var(--color-primary-light); }
+
+    .password-field { position: relative; }
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--color-text-3);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+    .password-toggle:hover { color: var(--color-text); }
+  </style>
+</head>
+<body>
+
+<div class="auth-page">
+  <div class="auth-bg-glow auth-bg-glow-1"></div>
+  <div class="auth-bg-glow auth-bg-glow-2"></div>
+
+  <div class="auth-card">
+    <a href="/" class="auth-logo">
+      <span class="auth-logo-icon">🌫️</span>
+      <span class="auth-logo-text">UdaraAPI</span>
+    </a>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Login</button>
+      <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+      <div>
+        <div class="auth-form-title">Welcome back</div>
+        <div class="auth-form-subtitle">Login ke akun UdaraAPI kamu</div>
+      </div>
+      <div id="loginError" class="auth-error"></div>
+      <div class="form-group">
+        <label class="form-label" for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" class="form-input" placeholder="you@example.com" required autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="loginPassword">Password</label>
+        <div class="password-field">
+          <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required autocomplete="current-password" />
+          <button type="button" class="password-toggle" onclick="togglePassword('loginPassword', this)">👁</button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full auth-submit" id="loginBtn">
+        Login to Dashboard
+      </button>
+    </form>
+
+    <!-- REGISTER FORM -->
+    <form class="auth-form" id="registerForm" style="display:none" onsubmit="handleRegister(event)">
+      <div>
+        <div class="auth-form-title">Create account</div>
+        <div class="auth-form-subtitle">Dapatkan API Key gratis dalam hitungan detik</div>
+      </div>
+      <div id="registerError" class="auth-error"></div>
+      <div class="form-group">
+        <label class="form-label" for="regName">Full Name</label>
+        <input type="text" id="regName" class="form-input" placeholder="John Doe" required autocomplete="name" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regEmail">Email</label>
+        <input type="email" id="regEmail" class="form-input" placeholder="you@example.com" required autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regPassword">Password</label>
+        <div class="password-field">
+          <input type="password" id="regPassword" class="form-input" placeholder="Min. 8 characters" required autocomplete="new-password" minlength="8" />
+          <button type="button" class="password-toggle" onclick="togglePassword('regPassword', this)">👁</button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full auth-submit" id="registerBtn">
+        Create Free Account
+      </button>
+      <p style="font-size:12px;color:var(--color-text-3);text-align:center">
+        By registering, you agree to our Terms of Service and Privacy Policy.
+      </p>
+    </form>
+
+    <div class="auth-back">
+      <a href="/">← Back to homepage</a>
+    </div>
+  </div>
+</div>
+
+<div id="toastContainer"></div>
+
+<script>
+  // Check for tab param in URL
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('tab') === 'register') {
+    switchTab('register');
+  }
+
+  // Redirect if already logged in
+  if (localStorage.getItem('udaraapi_token')) {
+    window.location.href = '/dashboard';
+  }
+
+  function switchTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('tabLogin').classList.toggle('active', isLogin);
+    document.getElementById('tabRegister').classList.toggle('active', !isLogin);
+    document.getElementById('loginForm').style.display = isLogin ? 'flex' : 'none';
+    document.getElementById('registerForm').style.display = isLogin ? 'none' : 'flex';
+    history.replaceState({}, '', isLogin ? '/login' : '/login?tab=register');
+  }
+
+  function showError(formId, message) {
+    const el = document.getElementById(formId + 'Error');
+    el.textContent = message;
+    el.classList.add('visible');
+  }
+
+  function hideError(formId) {
+    document.getElementById(formId + 'Error').classList.remove('visible');
+  }
+
+  function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `<span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span><span>${message}</span>`;
+    document.getElementById('toastContainer').appendChild(toast);
+    setTimeout(() => {
+      toast.style.animation = 'fadeOut 0.3s ease forwards';
+      setTimeout(() => toast.remove(), 300);
+    }, 3500);
+  }
+
+  function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      btn.textContent = '👁';
+    }
+  }
+
+  async function handleLogin(e) {
+    e.preventDefault();
+    hideError('login');
+    const btn = document.getElementById('loginBtn');
+    btn.innerHTML = '<div class="spinner"></div> Logging in...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: document.getElementById('loginEmail').value,
+          password: document.getElementById('loginPassword').value,
+        }),
+      });
+
+      const data = await res.json();
+      if (!data.success) {
+        showError('login', data.error);
+        return;
+      }
+
+      localStorage.setItem('udaraapi_token', data.data.token);
+      localStorage.setItem('udaraapi_user', JSON.stringify(data.data.user));
+      showToast('Login berhasil! Mengarahkan ke dashboard...', 'success');
+      setTimeout(() => { window.location.href = '/dashboard'; }, 800);
+    } catch (err) {
+      showError('login', 'Network error. Please try again.');
+    } finally {
+      btn.innerHTML = 'Login to Dashboard';
+      btn.disabled = false;
+    }
+  }
+
+  async function handleRegister(e) {
+    e.preventDefault();
+    hideError('register');
+    const btn = document.getElementById('registerBtn');
+    btn.innerHTML = '<div class="spinner"></div> Creating account...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: document.getElementById('regName').value,
+          email: document.getElementById('regEmail').value,
+          password: document.getElementById('regPassword').value,
+        }),
+      });
+
+      const data = await res.json();
+      if (!data.success) {
+        showError('register', data.error);
+        return;
+      }
+
+      localStorage.setItem('udaraapi_token', data.data.token);
+      localStorage.setItem('udaraapi_user', JSON.stringify(data.data.user));
+      showToast('Akun berhasil dibuat! Mengarahkan ke dashboard...', 'success');
+      setTimeout(() => { window.location.href = '/dashboard'; }, 800);
+    } catch (err) {
+      showError('register', 'Network error. Please try again.');
+    } finally {
+      btn.innerHTML = 'Create Free Account';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
