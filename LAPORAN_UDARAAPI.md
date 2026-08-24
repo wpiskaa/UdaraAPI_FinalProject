@@ -1,8 +1,10 @@
 # 📋 Laporan Final Project — UdaraAPI SaaS Platform
 
-**Mata Kuliah**: Pemrograman Web Lanjut (PWS)  
-**Semester**: Antara 2026  
-**Proyek**: UdaraAPI — Indonesian Air Quality & ISPU Data Platform
+| **Mata Kuliah** | Pengembangan Web Service (PWS) |
+| **Semester** | Semester Antara 2026 |
+| **Repositori GitHub** | [https://github.com/wpiskaa/UdaraAPI_FinalProject](https://github.com/wpiskaa/UdaraAPI_FinalProject) |
+| **Live Deployment (Vercel)** | [https://udara-api-final-project.vercel.app](https://udara-api-final-project.vercel.app) |
+| **Dokumentasi API** | [https://udara-api-final-project.vercel.app/#endpoints](https://udara-api-final-project.vercel.app/#endpoints) |
 
 ---
 
