@@ -52,10 +52,9 @@ body {
 }
 
 .sidebar-logo .logo-icon {
-  font-size: 20px;
   width: 38px;
   height: 38px;
-  background: rgba(249, 115, 22, 0.15);
+  background: #ffedd5;
   border: 1px solid #f97316;
   border-radius: 8px;
   display: flex;
@@ -63,6 +62,15 @@ body {
   justify-content: center;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(249, 115, 22, 0.25);
+  overflow: hidden;
+  padding: 0;
+}
+
+.brand-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .sidebar-logo .logo-text {

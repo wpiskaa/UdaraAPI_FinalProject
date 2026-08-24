@@ -7,6 +7,7 @@
   <meta name="description" content="Login atau buat akun UdaraAPI untuk mendapatkan API Key kualitas udara Indonesia." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="stylesheet" href="/assets/css/style.css" />
   <style>
     .auth-page {
@@ -15,7 +16,7 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background: var(--cgem-sage-bg);
+      background: #f8fafc;
       position: relative;
     }
 
@@ -40,9 +41,8 @@
     }
 
     .auth-logo-icon {
-      font-size: 20px;
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       background: #ffedd5;
       border: 1.5px solid #ea580c;
       border-radius: 8px;
@@ -50,6 +50,16 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 2px 8px rgba(234, 88, 12, 0.2);
+      overflow: hidden;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .brand-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     .auth-logo-text {
@@ -173,7 +183,9 @@
 
   <div class="auth-card">
     <a href="/" class="auth-logo">
-      <span class="auth-logo-icon">🌫️</span>
+      <div class="auth-logo-icon">
+        <img src="/assets/images/logo.jpg" alt="UdaraAPI Logo" class="brand-logo-img" />
+      </div>
       <span class="auth-logo-text">UdaraAPI</span>
     </a>
 
