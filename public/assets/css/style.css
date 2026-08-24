@@ -1,42 +1,42 @@
 /* ===================================================
-   UdaraAPI — C-GEM Inspired Environmental Design System
-   Palette: Forest Deep Green (#1F5A2C), Karhutla Terracotta (#B85C2A),
-   Fresh Eco-Lime (#C8E86A), Soft Sage (#ECF0EA), Crisp White (#FFF)
+   UdaraAPI — Wildfire, Smoke & Karhutla Telemetry Design System
+   Palette: Flame Ember Orange (#EA580C, #F97316), Fiery Gold (#F59E0B, #FBBF24),
+   Smoked Charcoal (#0F172A, #181210), Clean Warm Slate (#FAFAF9), Crisp White (#FFF)
    =================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  /* C-GEM Signature Colors */
-  --cgem-forest: #1f5a2c;
-  --cgem-forest-dark: #153e1e;
-  --cgem-forest-light: #2d5a27;
-  --cgem-lime: #c8e86a;
-  --cgem-lime-light: #eaf3e2;
-  --cgem-sage-bg: #ecf0ea;
-  --cgem-cream-bg: #f6f7f2;
+  /* Wildfire & Flame Signature Colors */
+  --cgem-forest: #c2410c;             /* Primary Warm Ember */
+  --cgem-forest-dark: #7c2d12;        /* Deep Smoldering Charcoal Red */
+  --cgem-forest-light: #ea580c;       /* Vivid Flame Orange */
+  --cgem-lime: #f97316;               /* Radiant Ember Accent */
+  --cgem-lime-light: #fff7ed;         /* Soft Fireglow Tint */
+  --cgem-sage-bg: #fef3c7;            /* Warm Amber Ash Tint */
+  --cgem-cream-bg: #fafaf9;           /* Pure Clean Slate Light Background */
   
   /* Fire/Asap Alert Colors */
-  --cgem-terracotta: #b85c2a;
-  --cgem-terracotta-dark: #8c3f15;
-  --cgem-terracotta-light: #fef0e8;
+  --cgem-terracotta: #ea580c;
+  --cgem-terracotta-dark: #9a3412;
+  --cgem-terracotta-light: #ffedd5;
   --cgem-amber: #f59e0b;
   --cgem-danger: #dc2626;
 
-  /* Neutral Shades */
-  --cgem-dark: #1a1a1a;
-  --cgem-gray-dark: #333333;
-  --cgem-gray-muted: #666666;
-  --cgem-gray-subtle: #888888;
-  --cgem-gray-border: #e0e4dd;
+  /* Neutral Dark Charcoal Shades */
+  --cgem-dark: #0f172a;
+  --cgem-gray-dark: #1e293b;
+  --cgem-gray-muted: #64748b;
+  --cgem-gray-subtle: #94a3b8;
+  --cgem-gray-border: #e2e8f0;
   --cgem-white: #ffffff;
 
   /* ISPU Semantic Standards */
-  --ispu-baik: #2d5a27;
-  --ispu-sedang: #b27a00;
-  --ispu-tidak-sehat: #b85c2a;
-  --ispu-sangat-ts: #c53030;
-  --ispu-berbahaya: #741212;
+  --ispu-baik: #10b981;
+  --ispu-sedang: #f59e0b;
+  --ispu-tidak-sehat: #ea580c;
+  --ispu-sangat-ts: #dc2626;
+  --ispu-berbahaya: #7f1d1d;
 
   /* Typography */
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -51,9 +51,9 @@
   --radius-full: 9999px;
 
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 8px 24px rgba(31, 90, 44, 0.08);
+  --shadow-md: 0 8px 24px rgba(234, 88, 12, 0.12);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08);
-  --shadow-hover: 0 20px 48px rgba(31, 90, 44, 0.12);
+  --shadow-hover: 0 20px 48px rgba(234, 88, 12, 0.2);
 }
 
 /* Global Reset */
@@ -92,11 +92,11 @@ h1, h2, h3, h4, .font-display {
   letter-spacing: -0.02em;
 }
 
-/* Sticky Alert Topbar (like C-GEM) */
+/* Sticky Alert Topbar (Wildfire Emergency Dispatch) */
 .sticky-alert-bar {
-  background: #f7d800;
-  color: #1a1a1a;
-  padding: 8px 16px;
+  background: #0f172a;
+  color: #ffedd5;
+  padding: 9px 16px;
   text-align: center;
   font-size: 13px;
   font-weight: 600;
@@ -104,28 +104,31 @@ h1, h2, h3, h4, .font-display {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  border-bottom: 1px solid #e0c200;
+  border-bottom: 1px solid #7c2d12;
 }
 
 .sticky-alert-badge {
-  background: #1a1a1a;
-  color: #f7d800;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
   font-size: 10px;
   font-family: var(--font-mono);
   font-weight: 800;
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: 4px;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.4);
 }
 
-/* C-GEM Badges */
+/* Wildfire Theme Badges */
 .cgem-badge {
-  background: var(--cgem-lime);
-  color: var(--cgem-forest);
+  background: #ffedd5;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
   font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  padding: 6px 18px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  padding: 6px 16px;
   border-radius: var(--radius-xs);
   display: inline-block;
   text-transform: uppercase;
@@ -133,16 +136,17 @@ h1, h2, h3, h4, .font-display {
 }
 
 .cgem-badge-terracotta {
-  background: #f8ded0;
-  color: var(--cgem-terracotta);
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
 }
 
 .cgem-badge-danger {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: #7f1d1d;
+  color: #fef2f2;
 }
 
-/* C-GEM Buttons */
+/* Wildfire Theme Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -150,7 +154,7 @@ h1, h2, h3, h4, .font-display {
   gap: 8px;
   font-family: var(--font-sans);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 12px 24px;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -161,38 +165,41 @@ h1, h2, h3, h4, .font-display {
 }
 
 .btn-primary {
-  background: var(--cgem-forest);
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(31, 90, 44, 0.25);
+  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .btn-primary:hover {
-  background: var(--cgem-forest-dark);
+  background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(31, 90, 44, 0.35);
+  box-shadow: 0 8px 24px rgba(234, 88, 12, 0.45);
 }
 
 .btn-terracotta {
-  background: var(--cgem-terracotta);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(184, 92, 42, 0.25);
+  background: #7c2d12;
+  color: #ffedd5;
+  border: 1px solid #9a3412;
+  box-shadow: 0 4px 14px rgba(124, 45, 18, 0.25);
 }
 
 .btn-terracotta:hover {
-  background: var(--cgem-terracotta-dark);
+  background: #9a3412;
   transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(184, 92, 42, 0.35);
+  box-shadow: 0 8px 22px rgba(124, 45, 18, 0.4);
 }
 
 .btn-ghost {
   background: #ffffff;
-  color: var(--cgem-forest);
-  border: 1.5px solid var(--cgem-gray-border);
+  color: #0f172a;
+  border: 1.5px solid #cbd5e1;
 }
 
 .btn-ghost:hover {
-  border-color: var(--cgem-forest);
-  background: var(--cgem-lime-light);
+  border-color: #ea580c;
+  color: #ea580c;
+  background: #fff7ed;
   transform: translateY(-2px);
 }
 

@@ -22,22 +22,23 @@
   <nav class="navbar" id="navbar">
     <div class="nav-container">
       <a href="/" class="nav-brand">
-        <div class="brand-icon-box">🌫️</div>
+        <div class="brand-icon-box">🔥</div>
         <div>
-          <span class="brand-title">UdaraAPI</span>
-          <span class="brand-subtitle">SI-ASAP Telemetry Gateway</span>
+          <span class="brand-title">Udara<span>API</span></span>
+          <span class="brand-subtitle">SI-ASAP Karhutla Telemetry Gateway</span>
         </div>
       </a>
 
       <div class="nav-links">
         <a href="#stations" class="nav-link">Stasiun SPKU</a>
+        <a href="#solidaritas" class="nav-link">Solidaritas Karhutla</a>
         <a href="#sandbox" class="nav-link">API Sandbox</a>
         <a href="#standards" class="nav-link">Standar Mutu ISPU</a>
         <a href="#pricing" class="nav-link">Akses Developer</a>
       </div>
 
       <div class="nav-cta">
-        <a href="/login" class="btn btn-ghost btn-sm">Developer Login</a>
+        <a href="/login" class="btn btn-ghost btn-sm">Developer Portal</a>
         <a href="/login?tab=register" class="btn btn-primary btn-sm">Dapatkan API Key →</a>
       </div>
     </div>
@@ -48,17 +49,17 @@
     <div class="container">
       <div class="hero-wrap">
         <div class="hero-badge-wrap">
-          <span class="cgem-badge">INISIATIF PEMANTAUAN UDARA TERPADU</span>
+          <span class="cgem-badge">🔥 INISIATIF TELEMETRI BENCANA KARHUTLA &amp; ISPU NASIONAL</span>
         </div>
 
         <h1 class="hero-headline font-display">
-          Infrastruktur Data Kualitas Udara &<br/>
+          Infrastruktur Data Kualitas Udara &amp;<br/>
           <span class="accent-terracotta">Mitigasi Bencana Asap Karhutla</span>
         </h1>
 
         <p class="hero-mission-statement">
-          <strong>UdaraAPI</strong> adalah lapisan akuntabilitas dan telemetri terbuka untuk data pencemaran udara Indonesia: 
-          <em>endpoints yang dapat diakses secara terukur</em>, <em>konsentrasi polutan yang dapat dilacak</em>, dan <em>standar baku mutu lingkungan yang dapat diaudit</em> di 38 provinsi.
+          <strong>UdaraAPI</strong> adalah gateway telemetri terbuka untuk pemantauan kualitas udara dan darurat karhutla Indonesia: 
+          <em>REST API berkinerja tinggi</em>, <em>telemetri polutan PM2.5, PM10 &amp; gas kritis</em>, serta <em>standar baku mutu lingkungan yang dapat diaudit</em> di 38 provinsi.
         </p>
 
         <div class="hero-actions">
@@ -592,41 +593,65 @@
     </div>
   </section>
 
-  <!-- FOOTER (C-GEM FOREST GREEN) -->
+  <!-- FOOTER (ENTERPRISE PRODUCTION TELEMETRY PLATFORM) -->
   <footer class="footer">
     <div class="container">
-      <div class="footer-grid">
+      <div class="footer-grid" style="grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 36px;">
+        <!-- Col 1: Platform & Lead Architect Info -->
         <div>
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-            <span style="font-size:24px">🌫️</span>
-            <span style="font-family:var(--font-display);font-size:22px;font-weight:800;color:#ffffff">UdaraAPI · SI-ASAP</span>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <div class="brand-icon-box" style="width:38px;height:38px;font-size:20px;">🔥</div>
+            <span style="font-family:var(--font-display);font-size:22px;font-weight:800;color:#ffffff;letter-spacing:-0.02em">UdaraAPI · SI-ASAP</span>
           </div>
-          <p style="font-size:14px;color:#d2ebd5;line-height:1.7;max-width:400px">
-            Pusat penyedia antarmuka data kualitas udara dan mitigasi asap karhutla Indonesia. Dikembangkan sebagai proyek akhir mata kuliah Pemrograman Web Lanjut (PWS).
+          <p style="font-size:13.5px;color:#94a3b8;line-height:1.7;max-width:380px;margin-bottom:20px;">
+            Infrastruktur gateway telemetri data kualitas udara (ISPU) dan sistem peringatan dini bencana asap kebakaran hutan & lahan (Karhutla) Indonesia secara real-time 38 provinsi.
           </p>
+
+          <!-- Lead Architect Credit Card -->
+          <div class="footer-architect-card">
+            <div class="architect-avatar">HK</div>
+            <div class="architect-info">
+              <h5>Hafiz Kurniawan</h5>
+              <p>Lead Systems Architect &amp; Environmental Data Engineer</p>
+            </div>
+          </div>
         </div>
 
+        <!-- Col 2: Platform Navigation -->
         <div class="footer-col">
-          <h4>Navigasi Portal</h4>
-          <a href="#stations">38 Stasiun SPKU</a>
-          <a href="#sandbox">Developer Sandbox</a>
-          <a href="#standards">Baku Mutu ISPU</a>
-          <a href="/login">Dashboard Developer</a>
-          <a href="/login?tab=register">Buat Kunci API</a>
+          <h4>Navigasi Platform</h4>
+          <a href="#stations">38 Stasiun Pemantau (SPKU)</a>
+          <a href="#solidaritas">Pray for Indonesia</a>
+          <a href="#sandbox">Developer Live Sandbox</a>
+          <a href="#standards">Baku Mutu ISPU (Permen LHK)</a>
+          <a href="/login">Portal Developer</a>
+          <a href="/login?tab=register">Generate API Key</a>
         </div>
 
+        <!-- Col 3: Government & Science Standards -->
         <div class="footer-col">
-          <h4>Sumber Data Resmi</h4>
+          <h4>Standar &amp; Integrasi</h4>
           <a href="https://ispu.menlhk.go.id" target="_blank" rel="noopener">Kementerian LHK (ISPU Net)</a>
           <a href="https://www.bmkg.go.id" target="_blank" rel="noopener">BMKG Indonesia</a>
-          <a href="https://bnpb.go.id" target="_blank" rel="noopener">Badan Penanggulangan Bencana (BNPB)</a>
-          <a href="https://brgm.go.id" target="_blank" rel="noopener">Badan Restorasi Gambut & Mangrove</a>
+          <a href="https://bnpb.go.id" target="_blank" rel="noopener">Badan Nasional Bencana (BNPB)</a>
+          <a href="https://brgm.go.id" target="_blank" rel="noopener">Badan Restorasi Gambut (BRGM)</a>
+          <a href="https://github.com/wpiskaa/UdaraAPI_FinalProject" target="_blank" rel="noopener">GitHub Open Repository</a>
+        </div>
+
+        <!-- Col 4: Enterprise & Compliance -->
+        <div class="footer-col">
+          <h4>Infrastruktur &amp; Keamanan</h4>
+          <a href="#pricing">Enterprise Data SLA (99.98%)</a>
+          <a href="#pricing">Per-Day Rate Limiter Guard</a>
+          <a href="#pricing">HMAC SHA-256 Key Encryption</a>
+          <a href="#pricing">PostgreSQL / Supabase Cloud</a>
+          <a href="#pricing">Serverless Edge on Vercel</a>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <span>© 2026 UdaraAPI · Final Project Pemrograman Web Lanjut (PWS) · Semester Antara</span>
-        <span>Tech Stack: Express.js · PostgreSQL / Supabase · JWT Authentication · Vercel</span>
+        <span>© 2026 UdaraAPI Cloud Network — National Wildfire &amp; ISPU Telemetry Infrastructure. Platform Architecture &amp; Engineering by <strong>Hafiz Kurniawan</strong>. All rights reserved.</span>
+        <span>High-Performance Node.js &amp; PostgreSQL Core · Global Edge Deployment · Secured by JWT &amp; API Key Gateways</span>
       </div>
     </div>
   </footer>

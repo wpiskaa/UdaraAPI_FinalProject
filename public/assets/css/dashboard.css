@@ -23,13 +23,13 @@ body {
 }
 
 /* =============================================
-   SIDEBAR (DEEP FOREST GREEN — C-GEM THEME)
+   SIDEBAR (OBSIDIAN CHARCOAL & FLAME ORANGE THEME)
    ============================================= */
 .sidebar {
   width: 260px;
   height: 100vh;
-  background: #0e2617 !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: #0f172a !important;
+  border-right: 1px solid #1e293b !important;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -40,8 +40,8 @@ body {
 
 .sidebar-header {
   padding: 24px 20px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: #0e2617;
+  border-bottom: 1px solid #1e293b;
+  background: #0f172a;
 }
 
 .sidebar-logo {
@@ -55,13 +55,14 @@ body {
   font-size: 20px;
   width: 38px;
   height: 38px;
-  background: rgba(200, 232, 106, 0.15);
-  border: 1px solid rgba(200, 232, 106, 0.35);
+  background: rgba(249, 115, 22, 0.15);
+  border: 1px solid #f97316;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.25);
 }
 
 .sidebar-logo .logo-text {
@@ -78,7 +79,7 @@ body {
   flex-direction: column;
   gap: 6px;
   flex: 1;
-  background: #0e2617;
+  background: #0f172a;
 }
 
 .nav-item {
@@ -101,21 +102,21 @@ body {
 }
 
 .nav-item.active {
-  background: #c8e86a !important;
-  color: #0e2617 !important;
-  font-weight: 700 !important;
-  box-shadow: 0 4px 12px rgba(200, 232, 106, 0.25);
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
 }
 
 .nav-icon { font-size: 16px; }
 
 .sidebar-footer {
   padding: 18px 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid #1e293b;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: #091b10;
+  background: #090d16;
 }
 
 .user-info {
@@ -128,14 +129,15 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #c8e86a;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
   font-weight: 800;
-  color: #0e2617;
+  color: #ffffff;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.3);
 }
 
 .user-details { flex: 1; min-width: 0; }
@@ -149,10 +151,11 @@ body {
 }
 .user-plan { font-size: 11px; margin-top: 2px; }
 .badge-free {
-  background: rgba(255, 255, 255, 0.12);
-  color: #cbd5e1;
+  background: rgba(249, 115, 22, 0.15);
+  color: #fed7aa;
+  border: 1px solid rgba(249, 115, 22, 0.3);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
   padding: 2px 6px;
   border-radius: 4px;
   text-transform: uppercase;
