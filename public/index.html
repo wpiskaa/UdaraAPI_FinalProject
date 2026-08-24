@@ -634,46 +634,45 @@
   <div id="toastContainer"></div>
 
   <!-- ===================================================
-       FLOATING RESPECT MINI MUSIC BOX PLAYER
+       CIRCULAR FLOATING RESPECT MINI MUSIC BOX (WITH POPUP & HIDE)
        =================================================== -->
-  <div class="music-box" id="musicBox">
-    <div class="music-box-inner">
-      <div class="music-disc-wrap" id="musicDisc" onclick="toggleMusic()">
-        <span class="music-disc-vinyl">💿</span>
-        <span class="music-disc-note">🎵</span>
-      </div>
-
-      <div class="music-info">
-        <div class="music-title-row">
-          <span class="music-badge">RESPECT TRIBUTE</span>
-          <span class="music-live-indicator" id="musicLiveInd">● PLAYING</span>
-        </div>
-        <div class="music-track-title">Radiohead — Let Down (Remastered)</div>
-        <div class="music-track-sub">Tribute untuk Langit & Pejuang Hutan Indonesia</div>
-
-        <!-- Progress / Wave Visualizer -->
-        <div class="music-visualizer" id="musicVisualizer">
-          <div class="m-bar"></div>
-          <div class="m-bar"></div>
-          <div class="m-bar"></div>
-          <div class="m-bar"></div>
-          <div class="m-bar"></div>
-          <div class="m-bar"></div>
+  <div class="music-floating-wrapper" id="musicFloatingWrapper">
+    <!-- Expandable Control Card (Can be hidden / shown) -->
+    <div class="music-popover-card" id="musicPopoverCard">
+      <button class="music-close-btn" onclick="toggleMusicPopover(false)" title="Sembunyikan / Hide Panel">✕</button>
+      
+      <div class="music-card-header">
+        <div class="music-card-disc-mini" id="musicCardDiscMini">💿</div>
+        <div class="music-card-info">
+          <div class="music-card-badge-row">
+            <span class="music-card-badge">RESPECT TRIBUTE</span>
+            <span class="music-live-indicator" id="musicLiveInd">● PLAYING</span>
+          </div>
+          <div class="music-card-track">Radiohead — Let Down (Remastered)</div>
+          <div class="music-card-caption">Tribute Langit & Hutan Indonesia</div>
         </div>
       </div>
 
-      <div class="music-controls">
-        <button class="music-btn-play" id="musicPlayBtn" onclick="toggleMusic()" title="Play/Pause">
+      <div class="music-card-bottom">
+        <button class="music-btn-play-round" id="musicPlayBtn" onclick="toggleMusic()" title="Play / Pause">
           <span id="musicPlayIcon">▶</span>
         </button>
 
-        <!-- Volume Control -->
-        <div class="music-volume-box">
-          <button class="music-vol-icon" id="musicVolIcon" onclick="toggleMute()" title="Mute/Unmute">🔊</button>
-          <input type="range" class="music-vol-slider" id="musicVolSlider" min="0" max="1" step="0.05" value="0.4" oninput="setVolume(this.value)" title="Atur Volume" />
+        <div class="music-vol-group">
+          <button class="music-vol-btn" id="musicVolIcon" onclick="toggleMute()" title="Mute / Unmute">🔊</button>
+          <input type="range" class="music-vol-slider-round" id="musicVolSlider" min="0" max="1" step="0.05" value="0.5" oninput="setVolume(this.value)" title="Atur Volume" />
         </div>
       </div>
     </div>
+
+    <!-- Floating Circular Button (FAB) -->
+    <button class="music-circle-fab" id="musicCircleFab" onclick="toggleMusicPopover()" title="Radiohead — Let Down (Klik untuk Buka/Tutup)">
+      <div class="music-vinyl-circle" id="musicVinylCircle">💿</div>
+      <div class="music-fab-equalizer" id="musicFabEq">
+        <span></span><span></span><span></span>
+      </div>
+      <span class="music-fab-tooltip">🎵 Music Box</span>
+    </button>
   </div>
 
   <script src="/assets/js/landing.js"></script>

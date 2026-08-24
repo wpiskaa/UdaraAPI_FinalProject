@@ -289,61 +289,84 @@ function escapeHtml(str) {
 }
 
 // ===================================================
-// 5. RESPECT MINI MUSIC BOX PLAYER (RADIOHEAD - LET DOWN)
+// 5. CIRCULAR RESPECT MINI MUSIC BOX (RADIOHEAD - LET DOWN)
 // ===================================================
 let isMusicPlaying = false;
-let currentVolume = 0.4;
+let isPopoverOpen = false;
+let currentVolume = 0.5;
 let audioElement = null;
 
 function initAudioElement() {
   if (!audioElement) {
     audioElement = new Audio();
-    // Try primary asset path, fallback to /songs/ path
     audioElement.src = '/assets/audio/let_down.mp3';
     audioElement.onerror = () => {
       audioElement.src = '/songs/Let%20Down%20Remastered.mp3';
     };
     audioElement.loop = true;
     audioElement.volume = currentVolume;
+  }
+}
 
-    audioElement.addEventListener('ended', () => {
-      audioElement.currentTime = 0;
-      audioElement.play();
-    });
+function updateMusicUI(playing) {
+  const wrapper = document.getElementById('musicFloatingWrapper');
+  const icon = document.getElementById('musicPlayIcon');
+  const ind = document.getElementById('musicLiveInd');
+
+  if (playing) {
+    if (wrapper) wrapper.classList.add('playing');
+    if (icon) icon.textContent = '⏸';
+    if (ind) {
+      ind.textContent = '● PLAYING';
+      ind.style.color = '#c8e86a';
+    }
+  } else {
+    if (wrapper) wrapper.classList.remove('playing');
+    if (icon) icon.textContent = '▶';
+    if (ind) {
+      ind.textContent = '○ PAUSED';
+      ind.style.color = '#9cbca0';
+    }
   }
 }
 
 function toggleMusic() {
-  const box = document.getElementById('musicBox');
-  const icon = document.getElementById('musicPlayIcon');
-  const ind = document.getElementById('musicLiveInd');
-
   initAudioElement();
 
   if (!isMusicPlaying) {
     audioElement.volume = currentVolume;
     audioElement.play().then(() => {
       isMusicPlaying = true;
-      if (box) box.classList.add('playing');
-      if (icon) icon.textContent = '⏸';
-      if (ind) {
-        ind.textContent = '● PLAYING';
-        ind.style.color = '#c8e86a';
-      }
+      updateMusicUI(true);
       showToast('🎵 Memutar: Radiohead — Let Down (Remastered) • Tribute for Indonesia', 'info');
     }).catch(err => {
-      console.log('Audio autoplay prevented, user interaction required:', err);
+      console.log('Autoplay policy caught:', err);
     });
   } else {
     isMusicPlaying = false;
     audioElement.pause();
+    updateMusicUI(false);
+  }
+}
 
-    if (box) box.classList.remove('playing');
-    if (icon) icon.textContent = '▶';
-    if (ind) {
-      ind.textContent = '○ PAUSED';
-      ind.style.color = '#9cbca0';
+function toggleMusicPopover(forceState) {
+  const card = document.getElementById('musicPopoverCard');
+  if (!card) return;
+
+  if (typeof forceState === 'boolean') {
+    isPopoverOpen = forceState;
+  } else {
+    isPopoverOpen = !isPopoverOpen;
+  }
+
+  if (isPopoverOpen) {
+    card.classList.remove('hidden');
+    // If not playing when opened, start playback!
+    if (!isMusicPlaying) {
+      toggleMusic();
     }
+  } else {
+    card.classList.add('hidden');
   }
 }
 
@@ -365,24 +388,48 @@ function toggleMute() {
     slider.value = 0;
     setVolume(0);
   } else {
-    const prev = slider.dataset.prevVol || 0.4;
+    const prev = slider.dataset.prevVol || 0.5;
     slider.value = prev;
     setVolume(prev);
   }
 }
 
-// Gentle auto-play on first user interaction if not playing
-function setupAutoRespectMusic() {
-  function startOnInteraction() {
-    if (!isMusicPlaying) {
-      toggleMusic();
-    }
-    document.removeEventListener('click', startOnInteraction);
-    document.removeEventListener('keydown', startOnInteraction);
-  }
+// Aggressive responsive autoplay on load or any first touch/scroll/interaction
+function startAutoRespectMusic() {
+  initAudioElement();
 
-  document.addEventListener('click', startOnInteraction, { once: true });
-  document.addEventListener('keydown', startOnInteraction, { once: true });
+  // Hide popover by default so it's a sleek circular button
+  const card = document.getElementById('musicPopoverCard');
+  if (card) card.classList.add('hidden');
+
+  // Attempt instant play
+  audioElement.volume = currentVolume;
+  const playPromise = audioElement.play();
+
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      isMusicPlaying = true;
+      updateMusicUI(true);
+    }).catch(() => {
+      // If blocked by browser security policy, auto-start on ANY interaction
+      const onFirstInteract = () => {
+        if (!isMusicPlaying) {
+          audioElement.play().then(() => {
+            isMusicPlaying = true;
+            updateMusicUI(true);
+            showToast('🎵 Memutar: Radiohead — Let Down (Remastered) • Tribute for Indonesia', 'info');
+          });
+        }
+        ['click', 'scroll', 'touchstart', 'keydown'].forEach(evt => {
+          window.removeEventListener(evt, onFirstInteract);
+        });
+      };
+
+      ['click', 'scroll', 'touchstart', 'keydown'].forEach(evt => {
+        window.addEventListener(evt, onFirstInteract, { once: true, passive: true });
+      });
+    });
+  }
 }
 
 // Global Toast helper
@@ -402,5 +449,5 @@ function showToast(message, type = 'info') {
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   initPrayersWall();
-  setupAutoRespectMusic();
+  startAutoRespectMusic();
 });

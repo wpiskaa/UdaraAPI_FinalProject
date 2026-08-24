@@ -952,113 +952,198 @@
   background: #ffffff;
 }
 
-/* ===== FLOATING RESPECT MINI MUSIC BOX PLAYER ===== */
-.music-box {
+/* ===== CIRCULAR FLOATING MUSIC BOX (FAB & POPOVER) ===== */
+.music-floating-wrapper {
   position: fixed;
   bottom: 24px;
   right: 24px;
   z-index: 9999;
-  background: rgba(14, 38, 23, 0.95);
-  backdrop-filter: blur(12px);
-  border: 1.5px solid rgba(200, 232, 106, 0.4);
-  border-radius: 16px;
-  padding: 12px 18px;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
   display: flex;
-  align-items: center;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  max-width: 380px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
 }
 
-.music-box:hover {
-  transform: translateY(-3px);
-  border-color: #c8e86a;
-  box-shadow: 0 20px 45px rgba(200, 232, 106, 0.2);
-}
-
-.music-box-inner {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-}
-
-.music-disc-wrap {
-  width: 44px;
-  height: 44px;
-  background: #091b10;
-  border: 2px solid #c8e86a;
+/* 1. Circular Floating Button (FAB) */
+.music-circle-fab {
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
+  background: #0e2617;
+  border: 2px solid #c8e86a;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 16px rgba(200, 232, 106, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
   cursor: pointer;
-  flex-shrink: 0;
-  box-shadow: 0 0 12px rgba(200, 232, 106, 0.3);
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0;
 }
 
-.music-disc-vinyl {
-  font-size: 24px;
+.music-circle-fab:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 24px rgba(200, 232, 106, 0.6);
+}
+
+.music-vinyl-circle {
+  font-size: 28px;
+  line-height: 1;
   display: block;
 }
 
-.music-box.playing .music-disc-wrap {
-  animation: spinDisc 3s linear infinite;
+.music-floating-wrapper.playing .music-vinyl-circle {
+  animation: spinVinyl 3s linear infinite;
 }
 
-@keyframes spinDisc {
+@keyframes spinVinyl {
   100% { transform: rotate(360deg); }
 }
 
-.music-disc-note {
+/* Equalizer Bars on the FAB */
+.music-fab-equalizer {
   position: absolute;
+  bottom: 6px;
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+  height: 8px;
+}
+
+.music-fab-equalizer span {
+  width: 2.5px;
+  height: 3px;
+  background: #c8e86a;
+  border-radius: 1px;
+}
+
+.music-floating-wrapper.playing .music-fab-equalizer span:nth-child(1) { animation: eqJump 0.6s infinite ease-in-out 0.1s; }
+.music-floating-wrapper.playing .music-fab-equalizer span:nth-child(2) { animation: eqJump 0.6s infinite ease-in-out 0.3s; }
+.music-floating-wrapper.playing .music-fab-equalizer span:nth-child(3) { animation: eqJump 0.6s infinite ease-in-out 0.2s; }
+
+@keyframes eqJump {
+  0%, 100% { height: 2px; }
+  50% { height: 8px; }
+}
+
+.music-fab-tooltip {
+  position: absolute;
+  right: 68px;
+  background: #0e2617;
+  color: #c8e86a;
+  border: 1px solid rgba(200, 232, 106, 0.3);
+  padding: 4px 10px;
+  border-radius: 6px;
   font-size: 11px;
-  top: -4px;
-  right: -4px;
-  display: none;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  transform: translateX(6px);
 }
 
-.music-box.playing .music-disc-note {
-  display: block;
-  animation: floatNote 1.5s infinite ease-out;
+.music-circle-fab:hover .music-fab-tooltip {
+  opacity: 1;
+  transform: translateX(0);
 }
 
-@keyframes floatNote {
-  0% { transform: translateY(0) scale(0.8); opacity: 1; }
-  100% { transform: translateY(-16px) scale(1.2); opacity: 0; }
+/* 2. Popover Control Card */
+.music-popover-card {
+  background: rgba(14, 38, 23, 0.96);
+  backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(200, 232, 106, 0.4);
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  width: 320px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: bottom right;
 }
 
-.music-info {
+.music-popover-card.hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.85) translateY(12px);
+  pointer-events: none;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+.music-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #c4d8c6;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.music-close-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.music-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 20px;
+}
+
+.music-card-disc-mini {
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.music-floating-wrapper.playing .music-card-disc-mini {
+  animation: spinVinyl 3s linear infinite;
+}
+
+.music-card-info {
   flex: 1;
   min-width: 0;
 }
 
-.music-title-row {
+.music-card-badge-row {
   display: flex;
   align-items: center;
   gap: 6px;
   margin-bottom: 2px;
 }
 
-.music-badge {
+.music-card-badge {
   font-size: 9px;
   font-weight: 800;
   background: #fbbf24;
   color: #0e2617;
   padding: 1px 5px;
   border-radius: 3px;
-  letter-spacing: 0.05em;
 }
 
 .music-live-indicator {
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 800;
   color: #c8e86a;
 }
 
-.music-track-title {
-  font-size: 12.5px;
+.music-card-track {
+  font-size: 13px;
   font-weight: 800;
   color: #ffffff;
   white-space: nowrap;
@@ -1066,7 +1151,7 @@
   text-overflow: ellipsis;
 }
 
-.music-track-sub {
+.music-card-caption {
   font-size: 10.5px;
   color: #9cbca0;
   white-space: nowrap;
@@ -1074,80 +1159,58 @@
   text-overflow: ellipsis;
 }
 
-.music-visualizer {
+.music-card-bottom {
   display: flex;
-  align-items: flex-end;
-  gap: 2.5px;
-  height: 10px;
-  margin-top: 4px;
-}
-
-.m-bar {
-  width: 3px;
-  height: 3px;
-  background: #c8e86a;
-  border-radius: 1px;
-  transition: height 0.15s ease;
-}
-
-.music-box.playing .m-bar:nth-child(1) { animation: wave 0.8s infinite ease-in-out 0.1s; }
-.music-box.playing .m-bar:nth-child(2) { animation: wave 0.8s infinite ease-in-out 0.3s; }
-.music-box.playing .m-bar:nth-child(3) { animation: wave 0.8s infinite ease-in-out 0.2s; }
-.music-box.playing .m-bar:nth-child(4) { animation: wave 0.8s infinite ease-in-out 0.5s; }
-.music-box.playing .m-bar:nth-child(5) { animation: wave 0.8s infinite ease-in-out 0.4s; }
-.music-box.playing .m-bar:nth-child(6) { animation: wave 0.8s infinite ease-in-out 0.6s; }
-
-@keyframes wave {
-  0%, 100% { height: 3px; }
-  50% { height: 10px; }
-}
-
-.music-controls {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.music-btn-play {
-  width: 32px;
-  height: 32px;
+.music-btn-play-round {
+  width: 36px;
+  height: 36px;
   background: #c8e86a;
   color: #0e2617;
   border: none;
   border-radius: 50%;
-  font-size: 12px;
+  font-size: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.music-btn-play:hover {
+.music-btn-play-round:hover {
   transform: scale(1.1);
   background: #ffffff;
 }
 
-.music-volume-box {
+.music-vol-group {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 6px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.music-vol-icon {
+.music-vol-btn {
   background: none;
   border: none;
-  font-size: 11px;
+  font-size: 12px;
   color: #c4d8c6;
   cursor: pointer;
   padding: 0;
 }
 
-.music-vol-slider {
-  width: 48px;
+.music-vol-slider-round {
+  width: 60px;
   height: 4px;
   -webkit-appearance: none;
   appearance: none;
@@ -1157,7 +1220,7 @@
   cursor: pointer;
 }
 
-.music-vol-slider::-webkit-slider-thumb {
+.music-vol-slider-round::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 10px;
