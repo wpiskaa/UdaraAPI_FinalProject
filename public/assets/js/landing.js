@@ -292,78 +292,25 @@ function escapeHtml(str) {
 // 5. RESPECT MINI MUSIC BOX PLAYER (RADIOHEAD - LET DOWN)
 // ===================================================
 let isMusicPlaying = false;
-let audioCtx = null;
-let masterGain = null;
 let currentVolume = 0.4;
-let musicInterval = null;
+let audioElement = null;
 
-// Let Down Acoustic Ambient Motif Notes (A - E - F#m - D chords in Hz)
-const LET_DOWN_NOTES = [
-  // Intro/Verse motif: A chord arpeggio
-  440.00, 554.37, 659.25, 880.00, 659.25, 554.37,
-  // E chord arpeggio
-  329.63, 493.88, 659.25, 783.99, 659.25, 493.88,
-  // F#m chord arpeggio
-  369.99, 440.00, 554.37, 739.99, 554.37, 440.00,
-  // D chord arpeggio
-  293.66, 440.00, 587.33, 739.99, 587.33, 440.00
-];
+function initAudioElement() {
+  if (!audioElement) {
+    audioElement = new Audio();
+    // Try primary asset path, fallback to /songs/ path
+    audioElement.src = '/assets/audio/let_down.mp3';
+    audioElement.onerror = () => {
+      audioElement.src = '/songs/Let%20Down%20Remastered.mp3';
+    };
+    audioElement.loop = true;
+    audioElement.volume = currentVolume;
 
-function initAudioEngine() {
-  if (!audioCtx) {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    audioCtx = new AudioContext();
-    masterGain = audioCtx.createGain();
-    masterGain.gain.setValueAtTime(currentVolume, audioCtx.currentTime);
-    masterGain.connect(audioCtx.destination);
+    audioElement.addEventListener('ended', () => {
+      audioElement.currentTime = 0;
+      audioElement.play();
+    });
   }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-}
-
-function playNote(freq, time, duration = 0.6) {
-  if (!audioCtx || !isMusicPlaying) return;
-
-  const osc = audioCtx.createOscillator();
-  const noteGain = audioCtx.createGain();
-
-  // Warm gentle ambient acoustic electric piano timbre
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(freq, time);
-
-  noteGain.gain.setValueAtTime(0, time);
-  noteGain.gain.linearRampToValueAtTime(0.35, time + 0.04);
-  noteGain.gain.exponentialRampToValueAtTime(0.001, time + duration);
-
-  osc.connect(noteGain);
-  noteGain.connect(masterGain);
-
-  osc.start(time);
-  osc.stop(time + duration);
-}
-
-function startLetDownArpeggio() {
-  if (!audioCtx) initAudioEngine();
-  let step = 0;
-
-  function scheduleNextNotes() {
-    if (!isMusicPlaying || !audioCtx) return;
-    const now = audioCtx.currentTime;
-    const noteFreq = LET_DOWN_NOTES[step % LET_DOWN_NOTES.length];
-    playNote(noteFreq, now, 0.85);
-
-    // Occasional gentle low bass root
-    if (step % 6 === 0) {
-      const bassFreq = noteFreq / 2;
-      playNote(bassFreq, now, 1.4);
-    }
-
-    step++;
-  }
-
-  scheduleNextNotes();
-  musicInterval = setInterval(scheduleNextNotes, 380);
 }
 
 function toggleMusic() {
@@ -371,21 +318,25 @@ function toggleMusic() {
   const icon = document.getElementById('musicPlayIcon');
   const ind = document.getElementById('musicLiveInd');
 
-  if (!isMusicPlaying) {
-    initAudioEngine();
-    isMusicPlaying = true;
-    startLetDownArpeggio();
+  initAudioElement();
 
-    if (box) box.classList.add('playing');
-    if (icon) icon.textContent = '⏸';
-    if (ind) {
-      ind.textContent = '● PLAYING';
-      ind.style.color = '#c8e86a';
-    }
-    showToast('🎵 Memutar: Radiohead — Let Down (Remastered) • Tribute for Indonesia', 'info');
+  if (!isMusicPlaying) {
+    audioElement.volume = currentVolume;
+    audioElement.play().then(() => {
+      isMusicPlaying = true;
+      if (box) box.classList.add('playing');
+      if (icon) icon.textContent = '⏸';
+      if (ind) {
+        ind.textContent = '● PLAYING';
+        ind.style.color = '#c8e86a';
+      }
+      showToast('🎵 Memutar: Radiohead — Let Down (Remastered) • Tribute for Indonesia', 'info');
+    }).catch(err => {
+      console.log('Audio autoplay prevented, user interaction required:', err);
+    });
   } else {
     isMusicPlaying = false;
-    if (musicInterval) clearInterval(musicInterval);
+    audioElement.pause();
 
     if (box) box.classList.remove('playing');
     if (icon) icon.textContent = '▶';
@@ -398,8 +349,8 @@ function toggleMusic() {
 
 function setVolume(val) {
   currentVolume = parseFloat(val);
-  if (masterGain && audioCtx) {
-    masterGain.gain.setValueAtTime(currentVolume, audioCtx.currentTime);
+  if (audioElement) {
+    audioElement.volume = currentVolume;
   }
   const icon = document.getElementById('musicVolIcon');
   if (icon) {

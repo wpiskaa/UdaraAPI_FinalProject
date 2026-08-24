@@ -39,6 +39,7 @@ app.use('/api', globalLimiter);
 // SERVE STATIC FILES
 // =============================================
 app.use(express.static(path.join(__dirname, '../public')));
+app.use('/songs', express.static(path.join(__dirname, '../songs')));
 
 // =============================================
 // SERVE HTML PAGES (Must be before API routes)
