@@ -113,7 +113,7 @@ app.get('/api/v1', (req, res) => {
     name: 'UdaraAPI',
     version: '1.0.0',
     description: 'Data Kualitas Udara (ISPU) Indonesia via REST API',
-    docs: 'https://udara-api.vercel.app',
+    docs: 'https://udara-api-final-project.vercel.app',
     endpoints: {
       stations: {
         list: 'GET /api/v1/stations',

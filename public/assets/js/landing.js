@@ -126,6 +126,10 @@ function initSandboxConsole() {
   runSandboxRequest();
 }
 
+function getApiBase() {
+  return window.location.origin.includes('localhost') ? window.location.origin : 'https://udara-api-final-project.vercel.app';
+}
+
 function selectEndpointPreset(presetKey, btn) {
   document.querySelectorAll('.s-endpoint-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -133,7 +137,7 @@ function selectEndpointPreset(presetKey, btn) {
 
   const p = SANDBOX_PRESETS[presetKey];
   document.getElementById('lblMethod').textContent = p.method;
-  document.getElementById('lblUrl').textContent = `https://udara-api.vercel.app${p.path}`;
+  document.getElementById('lblUrl').textContent = `${getApiBase()}${p.path}`;
   runSandboxRequest();
 }
 
@@ -154,7 +158,7 @@ function runSandboxRequest() {
   btn.disabled = true;
 
   const p = SANDBOX_PRESETS[currentPreset];
-  const url = `https://udara-api.vercel.app${p.path}`;
+  const url = `${getApiBase()}${p.path}`;
 
   setTimeout(() => {
     btn.innerHTML = '<span>⚡ Eksekusi Request</span>';

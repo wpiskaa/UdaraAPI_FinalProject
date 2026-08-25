@@ -471,11 +471,12 @@ function logout() {
 // Update quickstart code with first key
 async function updateQuickstart() {
   const data = await apiRequest('/dashboard/keys');
+  const baseDomain = window.location.origin.includes('localhost') ? window.location.origin : 'https://udara-api-final-project.vercel.app';
   if (data?.success && data.data.length > 0) {
     const key = data.data[0].api_key;
     document.getElementById('quickstartCode').textContent =
       `curl -H "X-API-Key: ${key}" \\
-  https://udara-api.vercel.app/api/v1/records/latest`;
+  ${baseDomain}/api/v1/records/latest`;
   }
 }
 updateQuickstart();
