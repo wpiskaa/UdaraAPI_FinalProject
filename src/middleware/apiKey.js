@@ -11,7 +11,7 @@ const requireApiKey = async (req, res, next) => {
     return res.status(401).json({
       success: false,
       error: 'API key is required. Pass it via X-API-Key header or ?api_key= query parameter.',
-      docs: 'https://udara-api.vercel.app/docs',
+      docs: 'https://udara-api-final-project.vercel.app',
     });
   }
 
