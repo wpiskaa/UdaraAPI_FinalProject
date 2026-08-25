@@ -479,7 +479,10 @@
             <button class="s-tab" onclick="setLang('python', this)">Python (requests)</button>
             <button class="s-tab" onclick="setLang('php', this)">PHP (cURL)</button>
           </div>
-          <button class="btn btn-ghost btn-sm" style="background:#222;color:#fff;border-color:#444" onclick="copySandboxCode()">📋 Salin Cuplikan</button>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-ghost btn-sm" style="background:#222;color:#fff;border-color:#444" onclick="copySandboxUrl()">🔗 Salin URL</button>
+            <button class="btn btn-ghost btn-sm" style="background:#222;color:#fff;border-color:#444" onclick="copySandboxCode()">📋 Salin Kode</button>
+          </div>
         </div>
 
         <div class="sandbox-grid">
@@ -758,6 +761,6 @@
     </button>
   </div>
 
-  <script src="/assets/js/landing.js"></script>
+  <script src="/assets/js/landing.js?v=2.5"></script>
 </body>
 </html>

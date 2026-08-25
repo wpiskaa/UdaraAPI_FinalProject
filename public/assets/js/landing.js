@@ -170,22 +170,34 @@ function runSandboxRequest() {
     const jsonStr = JSON.stringify(p.payload, null, 2);
     sizeEl.textContent = `${(jsonStr.length / 1024).toFixed(1)} KB`;
 
+    let snippetCode = '';
     if (currentLanguage === 'curl') {
-      out.textContent = `# cURL Request:\ncurl -X GET "${url}" \\\n  -H "X-API-Key: ck_live_demo_key_here"\n\n# Response Payload (HTTP 200 OK):\n${jsonStr}`;
+      snippetCode = `curl -X GET "${url}" \\\n  -H "X-API-Key: ck_live_demo_key_here"`;
     } else if (currentLanguage === 'js') {
-      out.textContent = `// JavaScript (Fetch API):\nconst res = await fetch("${url}", {\n  headers: { "X-API-Key": "ck_live_demo_key_here" }\n});\nconst data = await res.json();\nconsole.log(data);\n\n// Response:\n${jsonStr}`;
+      snippetCode = `const res = await fetch("${url}", {\n  headers: { "X-API-Key": "ck_live_demo_key_here" }\n});\nconst data = await res.json();\nconsole.log(data);`;
     } else if (currentLanguage === 'python') {
-      out.textContent = `# Python (requests):\nimport requests\n\nurl = "${url}"\nheaders = {"X-API-Key": "ck_live_demo_key_here"}\nres = requests.get(url, headers=headers)\nprint(res.json())\n\n# Response:\n${jsonStr}`;
+      snippetCode = `import requests\n\nurl = "${url}"\nheaders = {"X-API-Key": "ck_live_demo_key_here"}\nres = requests.get(url, headers=headers)\nprint(res.json())`;
     } else if (currentLanguage === 'php') {
-      out.textContent = `<?php\n$ch = curl_init("${url}");\ncurl_setopt($ch, CURLOPT_HTTPHEADER, ["X-API-Key: ck_live_demo_key_here"]);\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\n$res = curl_exec($ch);\ncurl_close($ch);\necho $res;\n\n// Response:\n${jsonStr}`;
+      snippetCode = `<?php\n$ch = curl_init("${url}");\ncurl_setopt($ch, CURLOPT_HTTPHEADER, ["X-API-Key: ck_live_demo_key_here"]);\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\n$res = curl_exec($ch);\ncurl_close($ch);\necho $res;`;
     }
+
+    out.textContent = `# Contoh Request (${currentLanguage.toUpperCase()}):\n${snippetCode}\n\n# Response Output (HTTP 200 OK):\n${jsonStr}`;
+    window._lastSandboxSnippet = snippetCode;
+    window._lastSandboxUrl = url;
   }, 200);
 }
 
 function copySandboxCode() {
-  const text = document.getElementById('sandboxOutput').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('Kode & contoh payload berhasil disalin!', 'success');
+  const codeToCopy = window._lastSandboxSnippet || document.getElementById('sandboxOutput').textContent;
+  navigator.clipboard.writeText(codeToCopy).then(() => {
+    showToast('Kode request berhasil disalin ke clipboard!', 'success');
+  });
+}
+
+function copySandboxUrl() {
+  const urlToCopy = window._lastSandboxUrl || document.getElementById('lblUrl').textContent;
+  navigator.clipboard.writeText(urlToCopy).then(() => {
+    showToast('URL Endpoint berhasil disalin!', 'success');
   });
 }
 
