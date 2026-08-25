@@ -44,16 +44,16 @@
   --font-mono: 'JetBrains Mono', monospace;
 
   /* Radius & Shadows */
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 8px 24px rgba(234, 88, 12, 0.12);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08);
-  --shadow-hover: 0 20px 48px rgba(234, 88, 12, 0.2);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 8px 24px rgba(234, 88, 12, 0.1);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 20px 48px rgba(234, 88, 12, 0.16);
 }
 
 /* Global Reset */
@@ -113,8 +113,8 @@ h1, h2, h3, h4, .font-display {
   font-size: 10px;
   font-family: var(--font-mono);
   font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 4px;
+  padding: 3px 10px;
+  border-radius: 9999px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   box-shadow: 0 2px 6px rgba(220, 38, 38, 0.4);
@@ -127,9 +127,9 @@ h1, h2, h3, h4, .font-display {
   border: 1px solid #fed7aa;
   font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   padding: 6px 16px;
-  border-radius: var(--radius-xs);
+  border-radius: 9999px;
   display: inline-block;
   text-transform: uppercase;
   font-family: var(--font-sans);
@@ -155,8 +155,8 @@ h1, h2, h3, h4, .font-display {
   font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 700;
-  padding: 12px 24px;
-  border-radius: var(--radius-sm);
+  padding: 10px 22px;
+  border-radius: 9999px;
   cursor: pointer;
   text-decoration: none;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);

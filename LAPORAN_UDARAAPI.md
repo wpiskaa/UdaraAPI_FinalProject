@@ -1,83 +1,243 @@
-# 📋 Laporan Final Project — UdaraAPI SaaS Platform
-
-| **Mata Kuliah** | Pengembangan Web Service (PWS) |
-| **Semester** | Semester Antara 2026 |
-| **Repositori GitHub** | [https://github.com/wpiskaa/UdaraAPI_FinalProject](https://github.com/wpiskaa/UdaraAPI_FinalProject) |
-| **Live Deployment (Vercel)** | [https://udara-api-final-project.vercel.app](https://udara-api-final-project.vercel.app) |
-| **Dokumentasi API** | [https://udara-api-final-project.vercel.app/#endpoints](https://udara-api-final-project.vercel.app/#endpoints) |
+# LAPORAN FINAL PROJECT
+## PEMROGRAMAN WEB LANJUT (PWS) — SEMESTER ANTARA 2026
 
 ---
 
-## 1. Deskripsi & Latar Belakang Proyek
+# UdaraAPI · SI-ASAP
+### *Platform SaaS Telemetri Kualitas Udara & Sistem Peringatan Dini Bencana Karhutla Indonesia*
 
-**UdaraAPI** adalah platform SaaS (Software as a Service) berbasis REST API yang menyediakan data Indeks Standar Pencemaran Udara (**ISPU**) dan konsentrasi polutan udara di seluruh Indonesia.
+**Disusun Oleh:**  
+**Hafiz Kurniawan**  
+*Lead Systems Architect & Environmental Data Engineer*  
+Program Studi Informatika
 
-Masalah polusi udara dan bencana asap akibat kebakaran hutan dan lahan (karhutla) merupakan isu nyata yang berulang setiap tahun di Indonesia (terutama di wilayah Riau, Jambi, Sumatera Selatan, dan Kalimantan Tengah). Platform UdaraAPI dirancang untuk memfasilitasi developer, peneliti, instansi kesehatan, dan pembuat aplikasi IoT agar dapat dengan mudah mengintegrasikan data kualitas udara real-time maupun historis ke dalam sistem mereka menggunakan **API Key** yang aman dan terukur.
-
----
-
-## 2. Tech Stack
-
-| Komponen | Teknologi | Keterangan |
-|---|---|---|
-| **Backend Runtime** | Node.js | Environment eksekusi server |
-| **Framework** | Express.js | REST API routing & middleware |
-| **Database** | PostgreSQL / Supabase | Relational Database terkelola |
-| **Authentication** | JWT (jsonwebtoken) & bcryptjs | Autentikasi user & hash password |
-| **Authorization / API Gate** | API Key (`ck_live_...`) | Validasi akses data & rate limiting harian |
-| **Deployment** | Vercel | Serverless hosting platform |
-| **Frontend** | HTML5, Vanilla CSS, JavaScript | Responsive UI + Canvas particle |
+**Live Production URL:** [https://udara-api-final-project.vercel.app](https://udara-api-final-project.vercel.app)  
+**GitHub Repository:** [https://github.com/wpiskaa/UdaraAPI_FinalProject](https://github.com/wpiskaa/UdaraAPI_FinalProject)  
+**PDF Report File:** [`LAPORAN_FINAL_PROJECT_UDARAAPI.pdf`](./LAPORAN_FINAL_PROJECT_UDARAAPI.pdf)
 
 ---
 
-## 3. Database Schema & ERD
+## 1. Pendahuluan
 
-### Entity Relationship Diagram
-- **users** (1) ── (N) **api_keys**
-- **api_keys** (1) ── (N) **api_usage_logs**
-- **stations** (1) ── (N) **air_quality_records**
+### 1.1 Latar Belakang
+Indonesia sering menghadapi ancaman kebakaran hutan dan lahan (Karhutla) yang melepaskan jutaan partikel debu halus dan polutan berbahaya seperti PM2.5, PM10, SO₂, CO, NO₂, dan O₃. Fenomena *transboundary haze* (kabut asap lintas batas) membuktikan bahwa pencemaran udara tidak mengenal sekat administratif.
 
-### Deskripsi Tabel:
-1. **`users`**: Identitas developer (Email, password ter-hash bcrypt, tier plan).
-2. **`api_keys`**: Kunci API unik milik user beserta kuota harian (`rate_limit_per_day`) dan counter request.
-3. **`stations`**: Stasiun Pemantau Kualitas Udara (SPKU) di 38 provinsi (latitude, longitude, operator).
-4. **`air_quality_records`**: Pembacaan parameter polutan harian (PM2.5, PM10, SO2, CO, NO2, O3, skor ISPU, status/kategori).
-5. **`api_usage_logs`**: Log audit request untuk analitik konsumsi di dashboard.
+**UdaraAPI** hadir sebagai solusi berbasis SaaS (*Software as a Service*) yang menyediakan gateway RESTful API terstandarisasi untuk data Indeks Standar Pencemar Udara (ISPU) dari seluruh Indonesia. Model layanannya terinspirasi dari platform API global seperti *OpenWeather API* dan *OpenRouter*—di mana pengembang (developer), peneliti, instansi pemerintah, dan startup dapat mendaftarkan akun, mengelola API Key berkuota, dan mengintegrasikan telemetri udara ke dalam aplikasi mereka.
 
----
-
-## 4. Spesifikasi Endpoint REST API
-
-### 4.1 Autentikasi User (JWT)
-- `POST /auth/register` — Pendaftaran akun (body: `name`, `email`, `password`)
-- `POST /auth/login` — Login akun, menghasilkan JWT Bearer Token
-- `GET /auth/me` — Profil user yang sedang login
-
-### 4.2 Manajemen Dashboard (JWT Protected)
-- `GET /dashboard/keys` — Menampilkan semua API Key milik user
-- `POST /dashboard/keys` — Membuat API Key baru
-- `PATCH /dashboard/keys/:id` — Mengaktifkan/menonaktifkan API Key
-- `DELETE /dashboard/keys/:id` — Menghapus API Key
-- `GET /dashboard/usage` — Analitik agregasi konsumsi 7 hari terakhir
-
-### 4.3 Data Kualitas Udara (API Key Protected)
-- `GET /api/v1/stations` — Daftar seluruh SPKU (filter: `province`, `city`, `search`, `page`, `limit`)
-- `GET /api/v1/stations/provinces` — Agregasi daftar provinsi yang memiliki stasiun
-- `GET /api/v1/stations/:id` — Detail satu stasiun
-- `GET /api/v1/stations/:id/records` — Riwayat pembacaan khusus stasiun tertentu
-- `GET /api/v1/records` — Seluruh data rekam udara (filter: `kategori`, `province`, `tanggal_mulai`, `tanggal_akhir`, `sort`, `order`)
-- `GET /api/v1/records/latest` — Kondisi udara terkini (1 rekam terbaru per stasiun)
-- `GET /api/v1/records/berbahaya` — Filter khusus zona `SANGAT TIDAK SEHAT` & `BERBAHAYA`
-- `GET /api/v1/stats` — Statistik ringkas platform (Endpoint Public)
+### 1.2 Kesesuaian Syarat Final Project
+| Kriteria Penilaian | Implementasi pada UdaraAPI | Status |
+| :--- | :--- | :---: |
+| **Model SaaS (Software as a Service)** | Gateway REST API publik dengan sistem registrasi mandiri, manajemen API Key berkuota (rate limiting 100 req/hari), dan audit log request. | ✅ Selesai & Teruji |
+| **Minimal 2 Tabel Relasional** | Menggunakan **5 tabel relasional** (`users`, `api_keys`, `stations`, `air_quality_records`, `api_usage_logs`) dengan foreign key cascade dan indexing. | ✅ 5 Tabel |
+| **Autentikasi JWT** | Proteksi endpoint dashboard menggunakan JSON Web Token (Bearer Auth) dan enkripsi password menggunakan bcrypt (10 salt rounds). | ✅ Selesai & Teruji |
+| **Minimal 50 Data & Kompleksitas** | Tersedia **38 Stasiun SPKU Aktif** di 28 provinsi dan **69 Rekam ISPU Harian** multi-parameter kimia udara sesuai standar Permen LHK No. P.14/2020. | ✅ 69 Data |
+| **Deploy di Vercel** | Berjalan 100% serverless di Vercel Edge Network terhubung ke PostgreSQL Supabase. | ✅ Live & Teruji |
+| **Diagram Lengkap** | Dilengkapi ERD, Use Case Diagram, Activity/User Flow Diagram (Swimlane), dan Dokumentasi API lengkap. | ✅ Lengkap di PDF |
 
 ---
 
-## 5. Deployment Guide (Vercel)
+## 2. Arsitektur Sistem & Tech Stack
 
-1. Push folder proyek ke repository GitHub.
-2. Buka dashboard [Vercel](https://vercel.com) → Import Repository.
-3. Masukkan Environment Variables:
-   - `SUPABASE_URL` = `https://hblbwumwayrhvrzxwygi.supabase.co`
-   - `SUPABASE_SERVICE_ROLE_KEY` = `your_supabase_service_role_key_here`
-   - `JWT_SECRET` = `your_jwt_secret_key_here`
-4. Tekan tombol **Deploy**.
+Sistem dibangun menggunakan arsitektur **Three-Tier Architecture**:
+1. **Presentation Layer**: Landing page informatif, Interactive API Sandbox Console, Dinding Doa Karhutla, Music Box Player, dan Dashboard Developer (`HTML5`, `CSS3 (Vanilla)`, `JavaScript`).
+2. **Application Layer**: RESTful API Server, JWT Middleware, HMAC Key Generator, dan Rate Limiter (`Node.js v20 LTS`, `Express.js v4`, `bcryptjs`, `jsonwebtoken`, `helmet`, `cors`).
+3. **Data Layer**: Relational Database PostgreSQL yang di-hosting di `Supabase` dengan connection pooling.
+4. **Cloud Infrastructure**: Serverless Deployment di `Vercel` dengan CI/CD otomatis dari GitHub.
+
+---
+
+## 3. Entity Relationship Diagram (ERD)
+
+### 3.1 Struktur 5 Tabel Database
+
+```mermaid
+erDiagram
+    users ||--o{ api_keys : "owns (1:N)"
+    api_keys ||--o{ api_usage_logs : "tracks (1:N)"
+    stations ||--o{ air_quality_records : "measures (1:N)"
+
+    users {
+        uuid id PK "UUID default uuid_generate_v4()"
+        varchar name "Nama Lengkap Developer"
+        varchar email UK "Email Login Unik"
+        varchar password_hash "Hash Password Bcrypt"
+        varchar plan "Tier (free/pro/enterprise)"
+        boolean is_active "Status Keaktifan"
+        timestamptz created_at "Timestamp Registrasi"
+    }
+
+    api_keys {
+        uuid id PK "UUID default uuid_generate_v4()"
+        uuid user_id FK "References users(id)"
+        varchar key_name "Label Key"
+        varchar api_key UK "HMAC-SHA256 Token"
+        int rate_limit_per_day "Batas Request Harian (100)"
+        int requests_today "Counter Hari Ini"
+        bigint total_requests "Total Akumulasi Request"
+        boolean is_active "Status Aktif"
+    }
+
+    api_usage_logs {
+        bigserial id PK "ID Log Audit"
+        uuid api_key_id FK "References api_keys(id)"
+        varchar endpoint "Path Endpoint"
+        varchar method "HTTP Method"
+        int status_code "HTTP Status Code"
+        int response_time_ms "Latensi Eksekusi (ms)"
+        varchar ip_address "IP Client"
+        timestamptz created_at "Waktu Panggilan"
+    }
+
+    stations {
+        serial id PK "ID Stasiun"
+        varchar name "Nama SPKU"
+        varchar city "Kota Lokasi"
+        varchar province "Provinsi (38 Provinsi)"
+        decimal latitude "Koordinat GPS Lintang"
+        decimal longitude "Koordinat GPS Bujur"
+        varchar operator "Pengelola (KLHK/BMKG/DLH)"
+        boolean is_active "Status Operasional"
+    }
+
+    air_quality_records {
+        serial id PK "ID Rekam Data"
+        int station_id FK "References stations(id)"
+        date tanggal "Tanggal Pengukuran"
+        decimal pm25 "PM2.5 (µg/m³)"
+        decimal pm10 "PM10 (µg/m³)"
+        decimal so2 "SO₂ (µg/m³)"
+        decimal co "CO (ppm)"
+        decimal no2 "NO₂ (µg/m³)"
+        decimal o3 "O₃ (µg/m³)"
+        int ispu "Nilai ISPU (0-500+)"
+        varchar kategori "BAIK/SEDANG/TIDAK SEHAT/SANGAT TIDAK SEHAT/BERBAHAYA"
+        varchar parameter_kritis "Polutan Dominan"
+    }
+```
+
+---
+
+## 4. Use Case Diagram
+
+```mermaid
+flowchart LR
+    Dev((Developer / User))
+    App((3rd-Party App))
+
+    subgraph UdaraAPI_Platform ["SISTEM UdaraAPI SAAS PLATFORM"]
+        subgraph Auth_Group ["Autentikasi & Akun"]
+            UC1([UC-01: Registrasi Akun])
+            UC2([UC-02: Login & Dapatkan JWT])
+            UC3([UC-03: Kelola & Buat API Key])
+            UC4([UC-04: Lihat Kuota & Audit Log])
+            UC5([UC-05: Revoke / Hapus API Key])
+        end
+
+        subgraph API_Group ["Public Data Endpoints"]
+            UC6([UC-06: GET /api/v1/stations])
+            UC7([UC-07: GET /api/v1/records])
+            UC8([UC-08: GET /api/v1/records/latest])
+            UC9([UC-09: GET /api/v1/records/berbahaya])
+            UC10([«include» Validasi X-API-Key])
+        end
+    end
+
+    Dev --> UC1
+    Dev --> UC2
+    Dev --> UC3
+    Dev --> UC4
+    Dev --> UC5
+    Dev --> UC6
+    Dev --> UC7
+
+    App --> UC6
+    App --> UC7
+    App --> UC8
+    App --> UC9
+
+    UC6 -.->|includes| UC10
+    UC7 -.->|includes| UC10
+    UC8 -.->|includes| UC10
+    UC9 -.->|includes| UC10
+```
+
+---
+
+## 5. Activity Diagram / User Flow (Swimlane)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Client as Developer / Client App
+    participant Backend as UdaraAPI Express Backend
+    participant DB as PostgreSQL Database (Supabase)
+
+    Note over Client,DB: Alur 1: Registrasi, Login & JWT Generation
+    Client->>Backend: POST /auth/register { name, email, password }
+    Backend->>Backend: Validasi Input & Hash Password (Bcrypt)
+    Backend->>DB: INSERT INTO users VALUES (...)
+    DB-->>Backend: User ID & Record Created
+    Backend->>Backend: Generate JWT Token (Expires in 7d)
+    Backend-->>Client: 201 Created { token, user }
+
+    Note over Client,DB: Alur 2: Pembuatan API Key (HMAC-SHA256)
+    Client->>Backend: POST /dashboard/keys (Header: Bearer JWT)
+    Backend->>Backend: Middleware verify JWT Token
+    Backend->>Backend: Generate HMAC-SHA256 API Key
+    Backend->>DB: INSERT INTO api_keys (user_id, key_name, api_key, rate_limit)
+    DB-->>Backend: Record Saved
+    Backend-->>Client: 201 Created { key: "ck_live_..." }
+
+    Note over Client,DB: Alur 3: Konsumsi REST API Telemetri
+    Client->>Backend: GET /api/v1/records?kategori=BERBAHAYA (Header: X-API-Key)
+    Backend->>DB: SELECT * FROM api_keys WHERE api_key = ?
+    DB-->>Backend: Key Data & requests_today
+    Backend->>Backend: Validasi Rate Limit (requests_today < rate_limit_per_day)
+    Backend->>DB: SELECT * FROM air_quality_records JOIN stations ...
+    DB-->>Backend: Dataset Kualitas Udara (69 Records)
+    Backend->>DB: UPDATE api_keys SET requests_today += 1; INSERT INTO api_usage_logs ...
+    Backend-->>Client: 200 OK JSON { success: true, data: [...], pagination: {...} }
+```
+
+---
+
+## 6. Dokumentasi Lengkap Endpoint API
+
+| Method | Endpoint URI | Auth Required | Deskripsi | Query / Body Params | Response Code & Output |
+| :---: | :--- | :---: | :--- | :--- | :--- |
+| `POST` | `/auth/register` | Public | Registrasi akun developer baru | `{ name, email, password }` | `201 Created` + JWT Token |
+| `POST` | `/auth/login` | Public | Autentikasi dan login | `{ email, password }` | `200 OK` + JWT Token |
+| `POST` | `/dashboard/keys` | JWT Bearer | Membuat API Key baru | `{ key_name }` | `201 Created` + HMAC API Key |
+| `GET` | `/dashboard/keys` | JWT Bearer | Daftar seluruh API Key user | - | `200 OK` + List API Keys |
+| `DELETE` | `/dashboard/keys/:id` | JWT Bearer | Menghapus / mencabut API Key | `id` (Param) | `200 OK` + Message Deleted |
+| `GET` | `/dashboard/usage` | JWT Bearer | Statistik kuota & log aktivitas | - | `200 OK` + Usage Analytics |
+| `GET` | `/api/v1/stations` | `X-API-Key` | Daftar Stasiun SPKU | `?province=...&city=...` | `200 OK` + 38 Stasiun SPKU |
+| `GET` | `/api/v1/stations/provinces` | `X-API-Key` | Daftar provinsi yang memiliki stasiun | - | `200 OK` + 28 Provinsi |
+| `GET` | `/api/v1/stations/:id` | `X-API-Key` | Detail satu stasiun SPKU | `id` (Param) | `200 OK` + Objek Stasiun |
+| `GET` | `/api/v1/records` | `X-API-Key` | Rekam ISPU harian multi-parameter | `?kategori=&tanggal_mulai=` | `200 OK` + 69 Rekam Data ISPU |
+| `GET` | `/api/v1/records/latest`| `X-API-Key` | Data ISPU terkini seluruh stasiun | - | `200 OK` + 23 Latest Readings |
+| `GET` | `/api/v1/records/berbahaya` | `X-API-Key` | Data rekam kondisi darurat/kritis | `?limit=20` | `200 OK` + Critical Hazard Data |
+| `GET` | `/api/v1/records/:id` | `X-API-Key` | Detail satu rekam data ISPU | `id` (Param) | `200 OK` + Objek Record |
+
+---
+
+## 7. Hasil Uji Coba Live Deployment
+
+Pengujian otomatis telah dijalankan terhadap server live Vercel (`test_live_audit.py`):
+1. **Pendaftaran Akun:** Berhasil mendaftarkan akun uji baru dan menerima token JWT `HS256` 295-karakter.
+2. **Login JWT:** Berhasil memverifikasi kredensial email & password dan mengembalikan sesi autentikasi valid 7 hari.
+3. **Pembuatan API Key:** Berhasil men-generate kunci API unik `ck_live_...` melalui endpoint `/dashboard/keys` dengan kuota 100 req/hari.
+4. **Pemanggilan Data REST API:** Berhasil memanggil `/api/v1/stations` (38 stasiun), `/api/v1/stations/provinces` (28 provinsi), `/api/v1/records` (69 data ISPU), `/api/v1/records/latest` (23 data terkini), dan `/api/v1/records/berbahaya` (20 data darurat) menggunakan header `X-API-Key`.
+5. **Audit Telemetri:** Sistem berhasil mencatat latensi panggilan, IP client, HTTP status code, dan konsumsi kuota ke tabel `api_usage_logs`.
+
+---
+
+## 8. Kesimpulan
+
+Seluruh kriteria penugasan Final Project Pemrograman Web Lanjut (PWS) telah dianalisis, diuji coba secara live, dan terbukti berfungsi 100%:
+1. Menghasilkan produk **SaaS REST API Gateway** fungsional ala *OpenWeather/OpenRouter*.
+2. Memiliki **5 tabel relasional PostgreSQL di Supabase** yang saling berelasi kuat.
+3. Menggunakan **autentikasi ganda (JWT untuk sesi pengguna dan HMAC API Key untuk konsumsi data API)**.
+4. Menyediakan **69 record data ISPU dari 38 stasiun pemantau di 28 provinsi**.
+5. Telah **ter-deploy dan berjalan live di Vercel**.
+6. Dilengkapi dokumen laporan formal berformat PDF ([`LAPORAN_FINAL_PROJECT_UDARAAPI.pdf`](./LAPORAN_FINAL_PROJECT_UDARAAPI.pdf)) lengkap dengan diagram ERD, Use Case, dan Swimlane Activity Flow.

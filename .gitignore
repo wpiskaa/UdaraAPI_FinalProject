@@ -2,3 +2,6 @@ node_modules/
 .env
 *.log
 .vercel/
+*.pdf
+generate_*.py
+test_*.py
