@@ -5,12 +5,15 @@ const { supabase } = require('../config/database');
  * Enforces rate limiting per day based on user plan
  */
 const requireApiKey = async (req, res, next) => {
-  const apiKey = req.headers['x-api-key'] || req.query.api_key;
+  let apiKey = req.headers['x-api-key'] || req.query.api_key;
+  if (!apiKey && req.headers.authorization) {
+    apiKey = req.headers.authorization.replace(/^Bearer\s+/i, '');
+  }
 
   if (!apiKey) {
     return res.status(401).json({
       success: false,
-      error: 'API key is required. Pass it via X-API-Key header or ?api_key= query parameter.',
+      error: 'API key is required. Pass it via X-API-Key header, Authorization: Bearer header, or ?api_key= query parameter.',
       docs: 'https://udara-api-final-project.vercel.app',
     });
   }
