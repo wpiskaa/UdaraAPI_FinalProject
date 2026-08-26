@@ -30,11 +30,45 @@ function initUserInfo() {
   const avatarEl = document.getElementById('userAvatar');
   if (avatarEl) avatarEl.textContent = initial;
 
+  const currentPlan = user.plan || 'free';
   const planEl = document.getElementById('userPlanDisplay');
   if (planEl) {
-    const planName = user.plan ? user.plan.charAt(0).toUpperCase() + user.plan.slice(1) : 'Free';
-    planEl.textContent = `${planName} Tier`;
+    const planName = currentPlan === 'pro' ? 'Production Pro' : currentPlan === 'enterprise' ? 'Enterprise Karhutla' : 'Starter Free';
+    planEl.textContent = planName;
   }
+
+  const quotaBadge = document.getElementById('userPlanQuotaBadge');
+  if (quotaBadge) {
+    const quotaMap = { free: '100 req/day', pro: '10.000 req/day', enterprise: '100.000 req/day' };
+    quotaBadge.textContent = quotaMap[currentPlan] || '100 req/day';
+  }
+
+  const freeBadge = document.getElementById('planBadgeFree');
+  if (freeBadge) {
+    freeBadge.textContent = currentPlan === 'free' ? 'Aktif Saat Ini' : 'Beralih ke Free';
+  }
+}
+
+async function executePlanUpgrade(targetPlan) {
+  const res = await apiRequest('/dashboard/upgrade', {
+    method: 'POST',
+    body: JSON.stringify({ target_plan: targetPlan }),
+  });
+
+  if (res?.success) {
+    user.plan = targetPlan;
+    localStorage.setItem('udaraapi_user', JSON.stringify(user));
+    initUserInfo();
+    closeModal('upgradeModal');
+    loadKeys();
+    showToast(res.message || `Paket berhasil di-upgrade ke ${targetPlan.toUpperCase()}!`, 'success');
+  } else {
+    showToast(res?.error || 'Gagal mengubah paket.', 'error');
+  }
+}
+
+function selectPlanUpgrade(targetPlan) {
+  executePlanUpgrade(targetPlan);
 }
 
 // =============================================

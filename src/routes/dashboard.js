@@ -277,18 +277,48 @@ router.get('/usage', async (req, res) => {
  * GET /dashboard/profile
  * Get user profile
  */
-router.get('/profile', async (req, res) => {
+/**
+ * POST /dashboard/upgrade
+ * Upgrade user plan (e.g. 'free' -> 'pro' -> 'enterprise')
+ */
+router.post('/upgrade', async (req, res) => {
   try {
-    const { data: user, error } = await supabase
+    const { target_plan } = req.body;
+    const validPlans = ['free', 'pro', 'enterprise'];
+    const newPlan = validPlans.includes(target_plan) ? target_plan : 'pro';
+
+    const rateLimits = { free: 100, pro: 10000, enterprise: 100000 };
+    const newLimit = rateLimits[newPlan] || 100;
+
+    // 1. Update user table
+    const { data: updatedUser, error: userErr } = await supabase
       .from('users')
-      .select('id, name, email, plan, created_at')
+      .update({ plan: newPlan })
       .eq('id', req.user.id)
+      .select('id, name, email, plan')
       .single();
 
-    if (error || !user) return res.status(404).json({ success: false, error: 'User not found.' });
+    if (userErr || !updatedUser) {
+      return res.status(500).json({ success: false, error: 'Gagal memperbarui paket user.' });
+    }
 
-    return res.json({ success: true, data: user });
+    // 2. Update rate limit on all active API keys for this user
+    await supabase
+      .from('api_keys')
+      .update({ rate_limit_per_day: newLimit })
+      .eq('user_id', req.user.id);
+
+    return res.json({
+      success: true,
+      message: `Akun berhasil di-upgrade ke paket ${newPlan.toUpperCase()}! Kuota harian Anda kini ${newLimit.toLocaleString()} reqs/hari.`,
+      data: {
+        plan: newPlan,
+        rate_limit_per_day: newLimit,
+        max_keys: { free: 2, pro: 10, enterprise: 50 }[newPlan],
+      },
+    });
   } catch (err) {
+    console.error('Upgrade error:', err);
     return res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
