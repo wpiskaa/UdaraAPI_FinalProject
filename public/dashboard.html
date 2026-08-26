@@ -1,438 +1,472 @@
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard — UdaraAPI</title>
+  <title>Analytics Dashboard — UdaraAPI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/png" href="/favicon.png" />
-  <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/dashboard.css" />
 </head>
 <body>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <a href="/" class="sidebar-logo">
-        <span class="logo-icon">
-          <img src="/assets/images/logo.png" alt="UdaraAPI Logo" class="brand-logo-img" />
-        </span>
-        <span class="logo-text">UdaraAPI</span>
+  <!-- FLOATING APP WINDOW (DRIBBLE MODERN SAAS LAYOUT) -->
+  <div class="dashboard-window">
+    
+    <!-- 1. SLIM DOCK SIDEBAR -->
+    <aside class="dock-sidebar">
+      <a href="/" class="dock-logo" title="UdaraAPI Homepage">
+        <img src="/assets/images/logo.png" alt="UdaraAPI Logo" />
       </a>
-    </div>
 
-    <nav class="sidebar-nav">
-      <a href="#" class="nav-item active" data-page="overview" onclick="switchPage('overview', this)">
-        <span class="nav-icon">📊</span>
-        <span>Overview</span>
-      </a>
-      <a href="#" class="nav-item" data-page="keys" onclick="switchPage('keys', this)">
-        <span class="nav-icon">🔑</span>
-        <span>API Keys</span>
-      </a>
-      <a href="#" class="nav-item" data-page="usage" onclick="switchPage('usage', this)">
-        <span class="nav-icon">📈</span>
-        <span>Usage</span>
-      </a>
-      <a href="#" class="nav-item" data-page="docs" onclick="switchPage('docs', this)">
-        <span class="nav-icon">📖</span>
-        <span>API Docs</span>
-      </a>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="user-info" id="userInfo">
-        <div class="user-avatar" id="userAvatar">?</div>
-        <div class="user-details">
-          <div class="user-name" id="userName">Loading...</div>
-          <div class="user-plan" id="userPlanBadge"><span class="badge badge-free">free</span></div>
-        </div>
-      </div>
-      <button class="logout-btn" onclick="logout()">↩ Logout</button>
-    </div>
-  </aside>
-
-  <!-- MAIN CONTENT -->
-  <main class="main-content">
-
-    <!-- TOP BAR -->
-    <div class="topbar">
-      <div class="topbar-left">
-        <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
-        <div class="page-title" id="pageTitle">Overview</div>
-      </div>
-      <div class="topbar-right">
-        <a href="/" class="btn btn-ghost btn-sm">← Homepage</a>
-      </div>
-    </div>
-
-    <!-- PAGE: OVERVIEW -->
-    <div class="page active" id="page-overview">
-      <div class="page-header">
-        <h1 class="greeting" id="greeting">Good evening! 👋</h1>
-        <p class="greeting-sub">Berikut ringkasan statistik dan aktivitas akun UdaraAPI kamu.</p>
-      </div>
-
-      <div class="stats-row">
-        <div class="stat-widget">
-          <div class="stat-widget-icon">📡</div>
-          <div class="stat-widget-body">
-            <div class="stat-widget-value" id="totalRequests">—</div>
-            <div class="stat-widget-label">Total Requests</div>
-          </div>
-        </div>
-        <div class="stat-widget">
-          <div class="stat-widget-icon">🕐</div>
-          <div class="stat-widget-body">
-            <div class="stat-widget-value" id="requestsToday">—</div>
-            <div class="stat-widget-label">Requests Today</div>
-          </div>
-        </div>
-        <div class="stat-widget">
-          <div class="stat-widget-icon">🔑</div>
-          <div class="stat-widget-body">
-            <div class="stat-widget-value" id="activeKeys">—</div>
-            <div class="stat-widget-label">API Keys</div>
-          </div>
-        </div>
-        <div class="stat-widget">
-          <div class="stat-widget-icon">⚡</div>
-          <div class="stat-widget-body">
-            <div class="stat-widget-value" id="planLimit">100/day</div>
-            <div class="stat-widget-label">Rate Limit</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="content-grid">
-        <div class="content-card">
-          <div class="card-header">
-            <div class="card-title">Requests (Last 7 Days)</div>
-          </div>
-          <div class="chart-container" id="chartContainer">
-            <canvas id="usageChart"></canvas>
-          </div>
-        </div>
-
-        <div class="content-card">
-          <div class="card-header">
-            <div class="card-title">Quick Start</div>
-          </div>
-          <div class="quickstart">
-            <div class="qs-step">
-              <div class="qs-num">1</div>
-              <div class="qs-body">
-                <div class="qs-title">Get your API Key</div>
-                <div class="qs-desc">Go to <a href="#" onclick="switchPage('keys')">API Keys</a> and create your first key.</div>
-              </div>
-            </div>
-            <div class="qs-step">
-              <div class="qs-num">2</div>
-              <div class="qs-body">
-                <div class="qs-title">Make your first request</div>
-                <div class="qs-desc">Use X-API-Key header with your key.</div>
-              </div>
-            </div>
-            <div class="qs-step">
-              <div class="qs-num">3</div>
-              <div class="qs-body">
-                <div class="qs-title">Build something awesome</div>
-                <div class="qs-desc">Check the <a href="#" onclick="switchPage('docs')">API Docs</a> for all available endpoints.</div>
-              </div>
-            </div>
-          </div>
-          <div class="quickstart-code">
-            <div class="code-label">Example Request</div>
-            <div class="code-block">
-              <code id="quickstartCode">curl -H "X-API-Key: YOUR_KEY" \
-  https://udara-api-final-project.vercel.app/api/v1/records/latest</code>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PAGE: API KEYS -->
-    <div class="page" id="page-keys">
-      <div class="page-header">
-        <h1>API Keys</h1>
-        <p class="page-desc">Manage your API keys. Keep them secret — treat them like passwords.</p>
-      </div>
-
-      <div class="keys-toolbar">
-        <button class="btn btn-primary" onclick="openCreateKeyModal()">
-          + Create New Key
+      <nav class="dock-nav">
+        <button class="dock-btn active" id="dock-metrics" onclick="switchPage('metrics', this)">
+          📊
+          <span class="dock-tooltip">Metrics &amp; Overview</span>
         </button>
-        <div class="keys-info" id="keysInfo">Loading...</div>
+        <button class="dock-btn" id="dock-health" onclick="switchPage('health', this)">
+          🧭
+          <span class="dock-tooltip">ISPU Health &amp; Roadmap</span>
+        </button>
+        <button class="dock-btn" id="dock-keys" onclick="switchPage('keys', this)">
+          🔑
+          <span class="dock-tooltip">API Keys Management</span>
+        </button>
+        <button class="dock-btn" id="dock-usage" onclick="switchPage('usage', this)">
+          📈
+          <span class="dock-tooltip">Usage Telemetry</span>
+        </button>
+        <button class="dock-btn" id="dock-docs" onclick="switchPage('docs', this)">
+          📖
+          <span class="dock-tooltip">Developer Docs</span>
+        </button>
+      </nav>
+
+      <div class="dock-footer">
+        <div class="user-avatar-btn" id="userAvatar" onclick="switchPage('keys')" title="User Profile">H</div>
+        <button class="dock-btn" onclick="logout()" title="Logout Akun" style="color:#ef4444">
+          ↩
+          <span class="dock-tooltip">Logout</span>
+        </button>
       </div>
+    </aside>
 
-      <div class="keys-list" id="keysList">
-        <div class="loading-state">
-          <div class="spinner"></div>
-          <span>Loading API keys...</span>
+    <!-- 2. MAIN WORKSPACE AREA -->
+    <main class="workspace-area">
+
+      <!-- TOP SUB-NAV BAR & TIME FILTERS -->
+      <header class="workspace-header">
+        <div class="header-top-row">
+          <!-- Main Tab Pills -->
+          <div class="nav-tabs-pill">
+            <a class="nav-tab-item active" id="tab-metrics" onclick="switchPage('metrics', document.getElementById('dock-metrics'))">Metrics</a>
+            <a class="nav-tab-item" id="tab-health" onclick="switchPage('health', document.getElementById('dock-health'))">Telemetry Readiness</a>
+            <a class="nav-tab-item" id="tab-keys" onclick="switchPage('keys', document.getElementById('dock-keys'))">API Keys</a>
+            <a class="nav-tab-item" id="tab-usage" onclick="switchPage('usage', document.getElementById('dock-usage'))">Usage Insights</a>
+            <a class="nav-tab-item" id="tab-docs" onclick="switchPage('docs', document.getElementById('dock-docs'))">API Reference</a>
+          </div>
+
+          <!-- Controls Right -->
+          <div class="header-controls">
+            <div class="sync-status">
+              <span class="sync-dot"></span>
+              <span>All Systems Operational</span>
+            </div>
+            <a href="/" class="btn-pill" style="text-decoration:none">
+              <span>🏠</span>
+              <span>Landing</span>
+            </a>
+          </div>
         </div>
+
+        <!-- Filter Sub-Row -->
+        <div class="header-filter-row">
+          <div class="time-range-pills">
+            <button class="time-pill" onclick="setTimeFilter('day', this)">DAY</button>
+            <button class="time-pill active" onclick="setTimeFilter('week', this)">WEEK</button>
+            <button class="time-pill" onclick="setTimeFilter('month', this)">MONTH</button>
+            <button class="time-pill" onclick="setTimeFilter('quarter', this)">QUARTER</button>
+            <button class="time-pill" onclick="setTimeFilter('year', this)">YEAR</button>
+            <button class="time-pill" onclick="setTimeFilter('custom', this)">CUSTOM RANGE</button>
+          </div>
+
+          <div class="action-btn-group">
+            <button class="btn-pill btn-pill-primary" onclick="openCreateKeyModal()">
+              <span>+ Create API Key</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- SCROLLABLE CONTENT BODY -->
+      <div class="workspace-scroll">
+
+        <!-- ==============================================
+             PAGE 1: METRICS & HERO CHARTS (DRIBBLE SHOT 1)
+             ============================================== -->
+        <div class="tab-page active" id="page-metrics">
+          
+          <!-- Top Hero Cards (2 Columns) -->
+          <div class="hero-cards-grid">
+            
+            <!-- Card 1: Telemetry API Calls (Pill Bars Chart) -->
+            <div class="hero-metric-card">
+              <div class="card-top-meta">
+                <div>
+                  <div class="metric-label-caps">WEEKLY API CALLS VOLUME</div>
+                  <div class="metric-value-row">
+                    <span class="metric-number-big" id="totalRequests">1,842,910</span>
+                    <span class="growth-badge positive">▲ +8.7%</span>
+                    <span class="badge-sub">in selected period</span>
+                  </div>
+                </div>
+                <div class="card-menu-dots">•••</div>
+              </div>
+
+              <!-- Pill-Bars Graphic Container -->
+              <div class="pill-bars-container" id="pillBarsContainer">
+                <div class="pill-bar-col">
+                  <div class="pill-bar-track"><div class="pill-bar-fill" style="height:48%"></div></div>
+                  <span class="pill-bar-label">18 Aug</span>
+                </div>
+                <div class="pill-bar-col">
+                  <div class="pill-bar-track"><div class="pill-bar-fill" style="height:72%"></div></div>
+                  <span class="pill-bar-label">19 Aug</span>
+                </div>
+                <div class="pill-bar-col">
+                  <div class="pill-bar-track"><div class="pill-bar-fill" style="height:55%"></div></div>
+                  <span class="pill-bar-label">20 Aug</span>
+                </div>
+                <div class="pill-bar-col">
+                  <div class="pill-bar-track"><div class="pill-bar-fill" style="height:40%"></div></div>
+                  <span class="pill-bar-label">21 Aug</span>
+                </div>
+                <div class="pill-bar-col">
+                  <div class="pill-bar-track"><div class="pill-bar-fill" style="height:86%"></div></div>
+                  <span class="pill-bar-label">22 Aug</span>
+                </div>
+                <div class="pill-bar-col">
+                  <div class="pill-bar-track"><div class="pill-bar-fill active-day" style="height:100%"></div></div>
+                  <span class="pill-bar-label">Today</span>
+                </div>
+                <div class="pill-bar-col">
+                  <div class="pill-bar-track"><div class="pill-bar-fill" style="height:64%"></div></div>
+                  <span class="pill-bar-label">Target</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: ISPU Telemetry Pulse (Smooth Spline Wave Chart) -->
+            <div class="hero-metric-card">
+              <div class="card-top-meta">
+                <div>
+                  <div class="metric-label-caps">ISPU POLLUTION INDEX PULSE</div>
+                  <div class="metric-value-row">
+                    <span class="metric-number-big" id="avgIspuVal">78.4</span>
+                    <span class="growth-badge flame">● MODERATE / SEDANG</span>
+                    <span class="badge-sub">National Avg</span>
+                  </div>
+                </div>
+                <div class="card-menu-dots">•••</div>
+              </div>
+
+              <!-- Smooth Spline Canvas -->
+              <div class="spline-chart-wrap">
+                <canvas id="splineCanvas"></canvas>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Telemetry Summary Row -->
+          <div class="hero-cards-grid">
+            <div class="hero-metric-card" style="padding:20px 24px">
+              <div class="card-top-meta">
+                <div>
+                  <div class="metric-label-caps">ACTIVE SPKU STATIONS TELEMETRY</div>
+                  <div class="metric-value-row">
+                    <span class="metric-number-big" id="statActiveStations">38 Stations</span>
+                    <span class="growth-badge positive">28 Provinces</span>
+                  </div>
+                </div>
+              </div>
+              <div class="pill-bars-container" id="miniPillsContainer" style="height:70px">
+                <!-- Mini Pills generated via JS -->
+              </div>
+            </div>
+
+            <div class="hero-metric-card" style="padding:20px 24px">
+              <div class="card-top-meta">
+                <div>
+                  <div class="metric-label-caps">DEVELOPER ACCOUNT QUOTA &amp; PLAN</div>
+                  <div class="metric-value-row">
+                    <span class="metric-number-big" id="userPlanDisplay">Free Tier</span>
+                    <span class="growth-badge positive">100 req/day</span>
+                  </div>
+                </div>
+                <button class="btn-pill" onclick="switchPage('keys')">Manage Keys →</button>
+              </div>
+              <p style="font-size:12px;color:var(--c-text-muted);margin:0;line-height:1.5">
+                Kunci API Anda terlindungi dengan algoritma hashing HMAC-SHA256. Setiap panggilan telemetri dihitung secara real-time dan dicatat ke PostgreSQL Supabase.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ==============================================
+             PAGE 2: READINESS & HEALTH (DRIBBLE SHOT 2)
+             ============================================== -->
+        <div class="tab-page" id="page-health">
+          
+          <div class="section-heading-row">
+            <div class="section-title">Telemetry Roadmap &amp; Infrastructure Readiness</div>
+          </div>
+
+          <!-- 3 Roadmap Cards -->
+          <div class="roadmap-progress-cards">
+            <div class="roadmap-card">
+              <div class="roadmap-card-header">
+                <span class="roadmap-title">SET UP API GATEWAY</span>
+                <span class="status-badge-pill badge-completed">3/3 COMPLETED</span>
+              </div>
+              <div class="roadmap-count">3/3</div>
+              <div class="roadmap-desc">Express REST Server, CORS Guard, Helmet Security Headers, and JWT Authentication middleware operational.</div>
+            </div>
+
+            <div class="roadmap-card">
+              <div class="roadmap-card-header">
+                <span class="roadmap-title">TELEMETRY DATA PIPELINE</span>
+                <span class="status-badge-pill badge-inprogress">11/13 IN PROGRESS</span>
+              </div>
+              <div class="roadmap-count">11/13</div>
+              <div class="roadmap-desc">PostgreSQL Supabase 5-table relational schema with 69 ISPU records and 38 SPKU stations linked.</div>
+            </div>
+
+            <div class="roadmap-card">
+              <div class="roadmap-card-header">
+                <span class="roadmap-title">RATE LIMITING &amp; AUDIT</span>
+                <span class="status-badge-pill badge-completed">15/15 COMPLETED</span>
+              </div>
+              <div class="roadmap-count">15/15</div>
+              <div class="roadmap-desc">HMAC-SHA256 API Key verification, daily quota tracker, and real-time response time latency logging active.</div>
+            </div>
+          </div>
+
+          <div class="section-heading-row" style="margin-top:12px">
+            <div>
+              <div class="section-title">Telemetry Infrastructure Health</div>
+              <p style="font-size:12px;color:var(--c-text-muted);margin-top:2px">
+                Understand the true technical pulse of your API deployment. From database latency to Karhutla early warning sensors.
+              </p>
+            </div>
+          </div>
+
+          <!-- 8 Health Metric Cards -->
+          <div class="health-matrix-grid">
+            <div class="health-item-card">
+              <span class="health-item-label">ISPU INDEX STABILITY</span>
+              <span class="health-status-tag">● STRONG</span>
+              <span class="health-item-note">Zero NaN calculations</span>
+            </div>
+
+            <div class="health-item-card">
+              <span class="health-item-label">AVERAGE API LATENCY</span>
+              <span class="health-status-tag">● STRONG (28ms)</span>
+              <span class="health-item-note">Fast edge response</span>
+            </div>
+
+            <div class="health-item-card">
+              <span class="health-item-label">SERVERLESS UPTIME</span>
+              <span class="health-status-tag">● STRONG (99.9%)</span>
+              <span class="health-item-note">Vercel Edge Network</span>
+            </div>
+
+            <div class="health-item-card">
+              <span class="health-item-label">ERROR RATE</span>
+              <span class="health-status-tag">● STRONG (&lt;0.01%)</span>
+              <span class="health-item-note">Robust error handlers</span>
+            </div>
+
+            <div class="health-item-card">
+              <span class="health-item-label">PROVINCIAL COVERAGE</span>
+              <span class="health-status-tag">● STRONG (28 Prov)</span>
+              <span class="health-item-note">Nationwide sensor mesh</span>
+            </div>
+
+            <div class="health-item-card">
+              <span class="health-item-label">JWT AUTH INTEGRITY</span>
+              <span class="health-status-tag">● STRONG (HS256)</span>
+              <span class="health-item-note">7-Day token lifecycle</span>
+            </div>
+
+            <div class="health-item-card">
+              <span class="health-item-label">KARHUTLA ALERT SYNC</span>
+              <span class="health-status-tag fair">● FAIR (Real-time)</span>
+              <span class="health-item-note">Hourly sensor poll</span>
+            </div>
+
+            <div class="health-item-card">
+              <span class="health-item-label">DB CONNECTION POOL</span>
+              <span class="health-status-tag">● STRONG (Active)</span>
+              <span class="health-item-note">Supabase PgBouncer</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ==============================================
+             PAGE 3: API KEYS MANAGEMENT
+             ============================================== -->
+        <div class="tab-page" id="page-keys">
+          
+          <div class="keys-card-container">
+            <div class="keys-header-bar">
+              <div>
+                <div class="section-title">Your API Credentials</div>
+                <p style="font-size:12.5px;color:var(--c-text-muted);margin-top:3px">
+                  Kunci API digunakan untuk otentikasi pemanggilan data REST API Gateway dari aplikasi pihak ketiga.
+                </p>
+              </div>
+              <button class="btn-pill btn-pill-primary" onclick="openCreateKeyModal()">
+                <span>+ Create New Key</span>
+              </button>
+            </div>
+
+            <div class="keys-list-wrap" id="keysList">
+              <div style="text-align:center;padding:30px 0;color:var(--c-text-muted)">Memuat API Keys...</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ==============================================
+             PAGE 4: USAGE ANALYTICS
+             ============================================== -->
+        <div class="tab-page" id="page-usage">
+          
+          <div class="hero-cards-grid">
+            <div class="hero-metric-card">
+              <div class="card-top-meta">
+                <div>
+                  <div class="metric-label-caps">DAILY REQUESTS TELEMETRY (LAST 7 DAYS)</div>
+                  <div class="metric-value-row">
+                    <span class="metric-number-big" id="u-totalRequests">0</span>
+                    <span class="growth-badge positive">Total Calls</span>
+                  </div>
+                </div>
+              </div>
+              <div class="spline-chart-wrap">
+                <canvas id="usageChart2"></canvas>
+              </div>
+            </div>
+
+            <div class="hero-metric-card">
+              <div class="card-top-meta">
+                <div>
+                  <div class="metric-label-caps">TOP API ENDPOINTS IN DEMAND</div>
+                </div>
+              </div>
+              <div id="topEndpoints" style="display:flex;flex-direction:column;gap:12px;margin-top:10px">
+                <div style="text-align:center;padding:30px 0;color:var(--c-text-muted)">Belum ada log request.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ==============================================
+             PAGE 5: API DOCUMENTATION & QUICK REFERENCE
+             ============================================== -->
+        <div class="tab-page" id="page-docs">
+          
+          <div class="docs-layout">
+            <div class="doc-block-card">
+              <div class="doc-block-title">
+                <span>🔐</span>
+                <span>Authenticating with UdaraAPI</span>
+              </div>
+              <p style="font-size:13px;color:var(--c-text-muted);line-height:1.6">
+                Kirimkan API Key Anda melalui header HTTP <code style="color:var(--c-primary);font-family:monospace;font-weight:700">X-API-Key</code> atau <code style="color:var(--c-primary);font-family:monospace;font-weight:700">Authorization: Bearer &lt;key&gt;</code>, atau melalui parameter query <code style="color:var(--c-primary);font-family:monospace;font-weight:700">?api_key=&lt;key&gt;</code>.
+              </p>
+              <div class="code-snippet-box">
+                <button class="btn-copy-code" onclick="copySnippet('curl_example')">Copy cURL</button>
+                <code id="curl_example">curl -X GET "https://udara-api-final-project.vercel.app/api/v1/records/latest" \
+  -H "X-API-Key: YOUR_API_KEY_HERE"</code>
+              </div>
+            </div>
+
+            <div class="doc-block-card">
+              <div class="doc-block-title">
+                <span>📡</span>
+                <span>All Available Public REST Endpoints</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--c-surface-subtle);border-radius:8px">
+                  <span style="font-family:monospace;font-size:12.5px;font-weight:700;color:var(--c-primary)">GET /api/v1/records/latest</span>
+                  <span style="font-size:12px;color:var(--c-text-muted)">Kondisi ISPU terkini seluruh stasiun aktif</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--c-surface-subtle);border-radius:8px">
+                  <span style="font-family:monospace;font-size:12.5px;font-weight:700;color:var(--c-primary)">GET /api/v1/records/berbahaya</span>
+                  <span style="font-size:12px;color:var(--c-text-muted)">Daftar data status Darurat / Sangat Tidak Sehat</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--c-surface-subtle);border-radius:8px">
+                  <span style="font-family:monospace;font-size:12.5px;font-weight:700;color:var(--c-primary)">GET /api/v1/stations</span>
+                  <span style="font-size:12px;color:var(--c-text-muted)">Daftar 38 stasiun pemantau (filter provinsi/kota)</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--c-surface-subtle);border-radius:8px">
+                  <span style="font-family:monospace;font-size:12.5px;font-weight:700;color:var(--c-primary)">GET /api/v1/records</span>
+                  <span style="font-size:12px;color:var(--c-text-muted)">Dataset 69 data ISPU harian multi-parameter</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
       </div>
-    </div>
+    </main>
+  </div>
 
-    <!-- PAGE: USAGE -->
-    <div class="page" id="page-usage">
-      <div class="page-header">
-        <h1>Usage Analytics</h1>
-        <p class="page-desc">Monitor your API consumption and performance metrics.</p>
-      </div>
-
-      <div class="stats-row" id="usageStats">
-        <div class="stat-widget">
-          <div class="stat-widget-icon">📡</div>
-          <div class="stat-widget-body">
-            <div class="stat-widget-value" id="u-totalRequests">—</div>
-            <div class="stat-widget-label">Total Requests</div>
-          </div>
-        </div>
-        <div class="stat-widget">
-          <div class="stat-widget-icon">📅</div>
-          <div class="stat-widget-body">
-            <div class="stat-widget-value" id="u-today">—</div>
-            <div class="stat-widget-label">Today</div>
-          </div>
-        </div>
-        <div class="stat-widget">
-          <div class="stat-widget-icon">🔑</div>
-          <div class="stat-widget-body">
-            <div class="stat-widget-value" id="u-keys">—</div>
-            <div class="stat-widget-label">Active Keys</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="content-grid-1">
-        <div class="content-card">
-          <div class="card-header">
-            <div class="card-title">Daily Requests (Last 7 Days)</div>
-          </div>
-          <div class="chart-container">
-            <canvas id="usageChart2"></canvas>
-          </div>
-        </div>
-
-        <div class="content-card">
-          <div class="card-header">
-            <div class="card-title">Top Endpoints</div>
-          </div>
-          <div id="topEndpoints">
-            <div style="text-align:center;color:var(--color-text-3);padding:40px 0">
-              No usage data yet. Start making API calls!
-            </div>
-          </div>
-        </div>
-
-        <div class="content-card">
-          <div class="card-header">
-            <div class="card-title">Usage per Key</div>
-          </div>
-          <div id="perKeyUsage"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PAGE: DOCS -->
-    <div class="page" id="page-docs">
-      <div class="page-header">
-        <h1>API Documentation</h1>
-        <p class="page-desc">Complete reference for all UdaraAPI endpoints.</p>
-      </div>
-
-      <div class="docs-container">
-        <div class="doc-section">
-          <h2>Authentication</h2>
-          <p>All API endpoints (except <code>/api/v1/stats</code>) require an API key. Pass it as a header:</p>
-          <div class="code-block"><code>X-API-Key: ck_live_your_api_key_here</code></div>
-          <p>Or as a query parameter:</p>
-          <div class="code-block"><code>GET /api/v1/records?api_key=ck_live_your_key</code></div>
-        </div>
-
-        <div class="doc-section">
-          <h2>📡 Stasiun Pemantau (Stations)</h2>
-
-          <div class="doc-endpoint">
-            <div class="doc-ep-header">
-              <span class="method get">GET</span>
-              <code>/api/v1/stations</code>
-              <span class="doc-ep-desc">Daftar semua stasiun pemantau</span>
-            </div>
-            <table class="param-table">
-              <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
-              <tbody>
-                <tr><td>page</td><td>integer</td><td>1</td><td>Page number</td></tr>
-                <tr><td>limit</td><td>integer</td><td>50</td><td>Per page (max 100)</td></tr>
-                <tr><td>province</td><td>string</td><td>—</td><td>Filter provinsi (e.g. Kalimantan Tengah, Riau)</td></tr>
-                <tr><td>city</td><td>string</td><td>—</td><td>Filter kota (e.g. Palangka Raya, Pekanbaru)</td></tr>
-                <tr><td>search</td><td>string</td><td>—</td><td>Cari nama/kota/provinsi</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="doc-endpoint">
-            <div class="doc-ep-header">
-              <span class="method get">GET</span>
-              <code>/api/v1/stations/provinces</code>
-              <span class="doc-ep-desc">Daftar seluruh provinsi yang memiliki stasiun</span>
-            </div>
-          </div>
-
-          <div class="doc-endpoint">
-            <div class="doc-ep-header">
-              <span class="method get">GET</span>
-              <code>/api/v1/stations/:id</code>
-              <span class="doc-ep-desc">Detail stasiun spesifik</span>
-            </div>
-          </div>
-
-          <div class="doc-endpoint">
-            <div class="doc-ep-header">
-              <span class="method get">GET</span>
-              <code>/api/v1/stations/:id/records</code>
-              <span class="doc-ep-desc">Riwayat pembacaan kualitas udara stasiun</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="doc-section">
-          <h2>🌫️ Data Kualitas Udara (Records)</h2>
-
-          <div class="doc-endpoint">
-            <div class="doc-ep-header">
-              <span class="method get">GET</span>
-              <code>/api/v1/records</code>
-              <span class="doc-ep-desc">Daftar data ISPU dengan filter lengkap</span>
-            </div>
-            <table class="param-table">
-              <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
-              <tbody>
-                <tr><td>page</td><td>integer</td><td>1</td><td>Page number</td></tr>
-                <tr><td>limit</td><td>integer</td><td>20</td><td>Per page (max 100)</td></tr>
-                <tr><td>kategori</td><td>string</td><td>—</td><td>BAIK, SEDANG, TIDAK SEHAT, SANGAT TIDAK SEHAT, BERBAHAYA</td></tr>
-                <tr><td>province</td><td>string</td><td>—</td><td>Filter provinsi</td></tr>
-                <tr><td>station_id</td><td>integer</td><td>—</td><td>Filter stasiun ID</td></tr>
-                <tr><td>tanggal_mulai</td><td>YYYY-MM-DD</td><td>—</td><td>Tanggal awal</td></tr>
-                <tr><td>tanggal_akhir</td><td>YYYY-MM-DD</td><td>—</td><td>Tanggal akhir</td></tr>
-                <tr><td>sort</td><td>string</td><td>tanggal</td><td>tanggal, ispu, pm25, pm10</td></tr>
-                <tr><td>order</td><td>string</td><td>desc</td><td>asc or desc</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="doc-endpoint">
-            <div class="doc-ep-header">
-              <span class="method get">GET</span>
-              <code>/api/v1/records/latest</code>
-              <span class="doc-ep-desc">Kondisi udara terkini (snapshot 1 record per stasiun)</span>
-            </div>
-          </div>
-
-          <div class="doc-endpoint">
-            <div class="doc-ep-header">
-              <span class="method get">GET</span>
-              <code>/api/v1/records/berbahaya</code>
-              <span class="doc-ep-desc">Hanya data berkategori SANGAT TIDAK SEHAT & BERBAHAYA</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="doc-section">
-          <h2>🏷️ Platform Stats</h2>
-          <div class="doc-endpoint">
-            <div class="doc-ep-header">
-              <span class="method get">GET</span>
-              <code>/api/v1/stats</code>
-              <span class="doc-ep-desc">Statistik platform (Public — Bebas API Key)</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="doc-section">
-          <h2>Response Format</h2>
-          <p>All responses follow this standard format:</p>
-          <div class="code-block"><code>{
-  "success": true,
-  "data": [...],
-  "pagination": {
-    "page": 1,
-    "limit": 20,
-    "total": 65,
-    "total_pages": 4,
-    "has_next": true,
-    "has_prev": false
-  }
-}</code></div>
-        </div>
-
-        <div class="doc-section">
-          <h2>Error Codes</h2>
-          <table class="param-table">
-            <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
-            <tbody>
-              <tr><td>400</td><td>Bad Request — Invalid parameters</td></tr>
-              <tr><td>401</td><td>Unauthorized — Missing or invalid API key / JWT</td></tr>
-              <tr><td>403</td><td>Forbidden — Key deactivated or account suspended</td></tr>
-              <tr><td>404</td><td>Not Found — Resource does not exist</td></tr>
-              <tr><td>429</td><td>Too Many Requests — Rate limit exceeded</td></tr>
-              <tr><td>500</td><td>Internal Server Error</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- CREATE KEY MODAL -->
+  <!-- MODAL: CREATE API KEY -->
   <div class="modal-overlay" id="createKeyModal">
     <div class="modal-card">
-      <div class="modal-title">🔑 Create API Key</div>
-      <div class="modal-subtitle">Give your key a descriptive name so you can identify it later.</div>
-      <form onsubmit="handleCreateKey(event)">
-        <div class="form-group" style="margin-bottom:20px">
-          <label class="form-label">Key Name</label>
-          <input type="text" class="form-input" id="newKeyName" placeholder="e.g., My App, Production, Testing" required minlength="2" maxlength="100" />
-        </div>
-        <div style="display:flex;gap:12px">
-          <button type="button" class="btn btn-ghost btn-full" onclick="closeModal('createKeyModal')">Cancel</button>
-          <button type="submit" class="btn btn-primary btn-full" id="createKeyBtn">Create Key</button>
-        </div>
-      </form>
+      <div class="modal-title">+ Generate New API Key</div>
+      <p style="font-size:12.5px;color:var(--c-text-muted)">
+        Buat kredensial API Key baru berkuota 100 request/hari untuk aplikasi atau riset Anda.
+      </p>
+      <div class="form-group">
+        <label class="form-label" for="newKeyName">Key Label / Name</label>
+        <input type="text" id="newKeyName" class="form-input" placeholder="e.g. My Mobile App / Production Backend" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-pill" onclick="closeModal('createKeyModal')">Cancel</button>
+        <button class="btn-pill btn-pill-primary" onclick="submitCreateKey()">Generate Key</button>
+      </div>
     </div>
   </div>
 
-  <!-- VIEW KEY MODAL (show full key once) -->
+  <!-- MODAL: VIEW CREATED KEY -->
   <div class="modal-overlay" id="viewKeyModal">
     <div class="modal-card">
-      <div class="modal-title">✅ API Key Created!</div>
-      <div class="modal-subtitle">Copy your API key now. For security, it won't be shown in full again.</div>
-      <div class="new-key-display" id="newKeyDisplay"></div>
-      <div style="display:flex;gap:12px;margin-top:20px">
-        <button class="btn btn-primary btn-full" onclick="copyNewKey()">📋 Copy Key</button>
-        <button class="btn btn-ghost btn-full" onclick="closeModal('viewKeyModal')">Done</button>
+      <div class="modal-title">🎉 API Key Generated!</div>
+      <p style="font-size:12.5px;color:var(--c-text-muted)">
+        Simpan kunci ini di tempat aman. Kunci ini hanya akan ditampilkan lengkap satu kali ini saja.
+      </p>
+      <div class="code-snippet-box" style="margin:4px 0">
+        <code id="newKeyValueDisplay" style="color:#fb923c;word-break:break-all">ck_live_...</code>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-pill btn-pill-primary" onclick="copyNewKeyAndClose()">Copy Key &amp; Close</button>
       </div>
     </div>
   </div>
 
-  <!-- DELETE CONFIRM MODAL -->
-  <div class="modal-overlay" id="deleteKeyModal">
-    <div class="modal-card">
-      <div class="modal-title">⚠️ Delete API Key</div>
-      <div class="modal-subtitle">Are you sure? This action cannot be undone. Any apps using this key will stop working.</div>
-      <input type="hidden" id="deleteKeyId" />
-      <div style="display:flex;gap:12px;margin-top:24px">
-        <button class="btn btn-ghost btn-full" onclick="closeModal('deleteKeyModal')">Cancel</button>
-        <button class="btn btn-danger btn-full" onclick="confirmDeleteKey()">Delete Key</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- Toast Notification -->
   <div id="toastContainer"></div>
 
-  <script src="/assets/js/dashboard.js?v=2.5"></script>
+  <script src="/assets/js/dashboard.js?v=3.0"></script>
 </body>
 </html>

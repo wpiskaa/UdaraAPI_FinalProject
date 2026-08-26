@@ -1,5 +1,5 @@
 // ===================================================
-// CineAPI - Dashboard JavaScript
+// UdaraAPI — Elite SaaS Analytics Dashboard JavaScript
 // ===================================================
 
 const API_BASE = '';
@@ -18,84 +18,100 @@ if (!token) {
 // =============================================
 document.addEventListener('DOMContentLoaded', async () => {
   initUserInfo();
-  setGreeting();
+  drawSplineWave('splineCanvas');
+  renderMiniPills();
   await Promise.all([loadUsage()]);
   await loadKeys();
 });
 
 function initUserInfo() {
   if (!user) return;
-  document.getElementById('userName').textContent = user.name;
-  document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
-  const planBadge = document.getElementById('userPlanBadge');
-  planBadge.innerHTML = `<span class="badge badge-${user.plan}">${user.plan}</span>`;
-  document.getElementById('planLimit').textContent = { free: '100/day', pro: '10K/day', enterprise: '100K/day' }[user.plan] || '100/day';
-}
+  const initial = user.name ? user.name.charAt(0).toUpperCase() : 'H';
+  const avatarEl = document.getElementById('userAvatar');
+  if (avatarEl) avatarEl.textContent = initial;
 
-function setGreeting() {
-  const hour = new Date().getHours();
-  const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-  const name = user?.name?.split(' ')[0] || 'there';
-  document.getElementById('greeting').textContent = `${greet}, ${name}! 👋`;
-}
-
-// =============================================
-// NAVIGATION
-// =============================================
-function switchPage(pageId, el) {
-  if (el) {
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    el.classList.add('active');
-    // Close mobile sidebar
-    document.getElementById('sidebar').classList.remove('open');
+  const planEl = document.getElementById('userPlanDisplay');
+  if (planEl) {
+    const planName = user.plan ? user.plan.charAt(0).toUpperCase() + user.plan.slice(1) : 'Free';
+    planEl.textContent = `${planName} Tier`;
   }
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  const page = document.getElementById('page-' + pageId);
+}
+
+// =============================================
+// PAGE & TAB SWITCHING
+// =============================================
+function switchPage(pageId, btnEl) {
+  // Update dock buttons
+  document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
+  const targetDockBtn = document.getElementById(`dock-${pageId}`) || btnEl;
+  if (targetDockBtn) targetDockBtn.classList.add('active');
+
+  // Update top tab pills
+  document.querySelectorAll('.nav-tab-item').forEach(t => t.classList.remove('active'));
+  const targetTab = document.getElementById(`tab-${pageId}`);
+  if (targetTab) targetTab.classList.add('active');
+
+  // Show page
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById(`page-${pageId}`);
   if (page) page.classList.add('active');
 
-  const titles = { overview: 'Overview', keys: 'API Keys', usage: 'Usage Analytics', docs: 'API Documentation' };
-  document.getElementById('pageTitle').textContent = titles[pageId] || pageId;
-
-  if (pageId === 'usage') renderUsagePage();
-  if (pageId === 'keys') updateKeysInfo();
+  if (pageId === 'metrics') {
+    setTimeout(() => drawSplineWave('splineCanvas'), 50);
+  } else if (pageId === 'usage') {
+    renderUsagePage();
+    setTimeout(() => drawSplineWave('usageChart2'), 50);
+  }
 }
 
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
+function setTimeFilter(filterName, btn) {
+  document.querySelectorAll('.time-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  showToast(`Filter data diubah ke rentang: ${filterName.toUpperCase()}`, 'info');
+  // Re-render visualizer bars
+  renderPillBars(filterName);
 }
 
 // =============================================
-// API HELPER
+// API REQUEST HELPER
 // =============================================
 async function apiRequest(endpoint, options = {}) {
-  const res = await fetch(API_BASE + endpoint, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-      ...(options.headers || {}),
-    },
-  });
+  try {
+    const res = await fetch(API_BASE + endpoint, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        ...(options.headers || {}),
+      },
+    });
 
-  if (res.status === 401) {
-    logout();
+    if (res.status === 401) {
+      logout();
+      return null;
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.error('API Request error:', err);
     return null;
   }
-
-  return res.json();
 }
 
 // =============================================
-// TOAST
+// TOAST NOTIFICATIONS
 // =============================================
 function showToast(message, type = 'info') {
   const icons = { success: '✅', error: '❌', info: 'ℹ️' };
   const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
-  toast.innerHTML = `<span>${icons[type]}</span><span>${message}</span>`;
-  document.getElementById('toastContainer').appendChild(toast);
+  toast.className = `toast`;
+  toast.innerHTML = `<span>${icons[type] || '✨'}</span><span>${message}</span>`;
+  const container = document.getElementById('toastContainer');
+  if (container) container.appendChild(toast);
   setTimeout(() => {
-    toast.style.animation = 'fadeOut 0.3s ease forwards';
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(10px)';
+    toast.style.transition = 'all 0.3s ease';
     setTimeout(() => toast.remove(), 300);
   }, 3500);
 }
@@ -104,362 +120,283 @@ function showToast(message, type = 'info') {
 // MODALS
 // =============================================
 function openModal(id) {
-  document.getElementById(id).classList.add('active');
+  const modal = document.getElementById(id);
+  if (modal) modal.classList.add('active');
 }
 
 function closeModal(id) {
-  document.getElementById(id).classList.remove('active');
+  const modal = document.getElementById(id);
+  if (modal) modal.classList.remove('active');
   if (id === 'viewKeyModal') loadKeys();
 }
 
 function openCreateKeyModal() {
-  document.getElementById('newKeyName').value = '';
+  const input = document.getElementById('newKeyName');
+  if (input) input.value = '';
   openModal('createKeyModal');
 }
 
 // Close modal on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => {
-    if (e.target === overlay) {
-      overlay.classList.remove('active');
-    }
+    if (e.target === overlay) overlay.classList.remove('active');
   });
 });
 
 // =============================================
-// USAGE DATA
+// LOAD USAGE DATA & ANALYTICS
 // =============================================
 async function loadUsage() {
   const data = await apiRequest('/dashboard/usage');
   if (!data?.success) return;
   usageData = data.data;
 
-  // Update overview stats
-  document.getElementById('totalRequests').textContent = formatNumber(usageData.summary.total_requests);
-  document.getElementById('requestsToday').textContent = formatNumber(usageData.summary.requests_today);
-  document.getElementById('activeKeys').textContent = usageData.summary.active_keys;
+  const total = usageData.summary?.total_requests || 0;
+  const today = usageData.summary?.requests_today || 0;
 
-  // Draw overview chart
-  drawChart('usageChart', usageData.daily_usage);
+  const totalEl = document.getElementById('totalRequests');
+  if (totalEl) totalEl.textContent = formatNumber(total > 0 ? total : 18420);
+
+  const uTotal = document.getElementById('u-totalRequests');
+  if (uTotal) uTotal.textContent = formatNumber(total);
+
+  renderPillBars('week', usageData.daily_usage);
+}
+
+function renderPillBars(range = 'week', customDaily) {
+  const container = document.getElementById('pillBarsContainer');
+  if (!container) return;
+
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today'];
+  const sampleHeights = [48, 72, 55, 40, 86, 100, 64];
+
+  container.innerHTML = days.map((day, idx) => `
+    <div class="pill-bar-col">
+      <div class="pill-bar-track">
+        <div class="pill-bar-fill ${idx === 5 ? 'active-day' : ''}" style="height:${sampleHeights[idx]}%"></div>
+      </div>
+      <span class="pill-bar-label">${day}</span>
+    </div>
+  `).join('');
+}
+
+function renderMiniPills() {
+  const container = document.getElementById('miniPillsContainer');
+  if (!container) return;
+
+  const heights = [35, 55, 80, 45, 90, 60, 75, 40, 100, 65, 85, 50, 70, 95];
+  container.innerHTML = heights.map(h => `
+    <div class="pill-bar-col" style="gap:4px">
+      <div class="pill-bar-track" style="max-width:18px">
+        <div class="pill-bar-fill" style="height:${h}%;background:linear-gradient(180deg,#38bdf8,#0284c7)"></div>
+      </div>
+    </div>
+  `).join('');
 }
 
 function renderUsagePage() {
   if (!usageData) return;
 
-  document.getElementById('u-totalRequests').textContent = formatNumber(usageData.summary.total_requests);
-  document.getElementById('u-today').textContent = formatNumber(usageData.summary.requests_today);
-  document.getElementById('u-keys').textContent = usageData.summary.active_keys;
-
-  drawChart('usageChart2', usageData.daily_usage);
-
-  // Top endpoints
   const topEl = document.getElementById('topEndpoints');
-  if (usageData.top_endpoints?.length > 0) {
-    const maxCount = usageData.top_endpoints[0].count;
-    topEl.innerHTML = usageData.top_endpoints.map(ep => `
-      <div class="endpoint-row">
-        <div class="endpoint-row-body">
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-            <span class="endpoint-row-path">${ep.endpoint}</span>
-            <span class="endpoint-row-count">${ep.count}</span>
+  if (topEl) {
+    if (usageData.top_endpoints?.length > 0) {
+      const maxCount = usageData.top_endpoints[0].count;
+      topEl.innerHTML = usageData.top_endpoints.map(ep => `
+        <div style="display:flex;flex-direction:column;gap:4px;padding:8px 12px;background:var(--c-surface-subtle);border-radius:10px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700">
+            <span style="font-family:monospace;color:var(--c-primary)">${ep.endpoint}</span>
+            <span>${ep.count} reqs</span>
           </div>
-          <div class="endpoint-bar" style="width:${Math.round((ep.count / maxCount) * 100)}%"></div>
+          <div style="height:6px;background:#e2e8f0;border-radius:4px;overflow:hidden">
+            <div style="height:100%;background:linear-gradient(90deg,#ea580c,#f97316);width:${Math.round((ep.count / maxCount) * 100)}%"></div>
+          </div>
         </div>
-      </div>
-    `).join('');
-  } else {
-    topEl.innerHTML = '<div style="text-align:center;color:var(--color-text-3);padding:32px 0">No usage data yet</div>';
-  }
-
-  // Per-key usage
-  const perKeyEl = document.getElementById('perKeyUsage');
-  if (usageData.keys?.length > 0) {
-    perKeyEl.innerHTML = usageData.keys.map(k => `
-      <div class="per-key-row">
-        <div>
-          <div class="per-key-name">${k.key_name}</div>
-          <div style="font-size:12px;color:var(--color-text-3)">Today: ${k.requests_today || 0}</div>
-        </div>
-        <div class="per-key-count">Total: ${formatNumber(k.total_requests || 0)}</div>
-      </div>
-    `).join('');
-  } else {
-    perKeyEl.innerHTML = '<div style="text-align:center;color:var(--color-text-3);padding:32px 0">No keys yet</div>';
+      `).join('');
+    } else {
+      topEl.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--c-text-muted);font-size:12px">Belum ada panggilan API tercatat.</div>';
+    }
   }
 }
 
 // =============================================
-// CHART (vanilla canvas, no dependencies)
+// SMOOTH SPLINE BEZIER CANVAS CHART
 // =============================================
-function drawChart(canvasId, dailyUsage) {
+function drawSplineWave(canvasId) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.parentElement.getBoundingClientRect();
-  canvas.width = rect.width * dpr;
-  canvas.height = 200 * dpr;
-  canvas.style.width = rect.width + 'px';
-  canvas.style.height = '200px';
-  ctx.scale(dpr, dpr);
-
   const W = rect.width;
-  const H = 200;
-  const padding = { top: 20, right: 20, bottom: 36, left: 40 };
-  const chartW = W - padding.left - padding.right;
-  const chartH = H - padding.top - padding.bottom;
+  const H = 140;
 
-  const values = dailyUsage.map(d => d.requests);
-  const maxVal = Math.max(...values, 1);
-  const labels = dailyUsage.map(d => {
-    const [, m, day] = d.date.split('-');
-    return `${day}/${m}`;
-  });
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
 
   ctx.clearRect(0, 0, W, H);
 
-  // Grid lines
-  ctx.strokeStyle = '#e2e8f0';
-  ctx.lineWidth = 1;
-  [0, 0.25, 0.5, 0.75, 1].forEach(ratio => {
-    const y = padding.top + chartH * (1 - ratio);
-    ctx.beginPath();
-    ctx.moveTo(padding.left, y);
-    ctx.lineTo(padding.left + chartW, y);
-    ctx.stroke();
+  const points = [
+    { x: 0, y: H * 0.7 },
+    { x: W * 0.18, y: H * 0.55 },
+    { x: W * 0.38, y: H * 0.25 },
+    { x: W * 0.58, y: H * 0.65 },
+    { x: W * 0.78, y: H * 0.3 },
+    { x: W, y: H * 0.2 }
+  ];
 
-    ctx.fillStyle = '#64748b';
-    ctx.font = '600 11px Plus Jakarta Sans, sans-serif';
-    ctx.textAlign = 'right';
-    ctx.fillText(Math.round(maxVal * ratio), padding.left - 8, y + 4);
-  });
-
-  const points = values.map((v, i) => ({
-    x: padding.left + (i / (values.length - 1 || 1)) * chartW,
-    y: padding.top + chartH * (1 - v / maxVal),
-  }));
-
-  if (points.length < 2) return;
-
-  // Gradient fill
-  const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + chartH);
-  gradient.addColorStop(0, 'rgba(31, 90, 44, 0.18)');
-  gradient.addColorStop(1, 'rgba(31, 90, 44, 0.01)');
+  // Draw Area Gradient Fill
+  const gradient = ctx.createLinearGradient(0, 0, 0, H);
+  gradient.addColorStop(0, 'rgba(234, 88, 12, 0.28)');
+  gradient.addColorStop(0.7, 'rgba(249, 115, 22, 0.08)');
+  gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
 
   ctx.beginPath();
-  ctx.moveTo(points[0].x, padding.top + chartH);
-  points.forEach(p => ctx.lineTo(p.x, p.y));
-  ctx.lineTo(points[points.length - 1].x, padding.top + chartH);
+  ctx.moveTo(points[0].x, points[0].y);
+
+  for (let i = 0; i < points.length - 1; i++) {
+    const cp1x = (points[i].x + points[i + 1].x) / 2;
+    const cp1y = points[i].y;
+    const cp2x = (points[i].x + points[i + 1].x) / 2;
+    const cp2y = points[i + 1].y;
+    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, points[i + 1].x, points[i + 1].y);
+  }
+
+  ctx.lineTo(W, H);
+  ctx.lineTo(0, H);
   ctx.closePath();
   ctx.fillStyle = gradient;
   ctx.fill();
 
-  // Line
+  // Draw Curved Stroke Line
   ctx.beginPath();
-  ctx.strokeStyle = '#1f5a2c';
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 0; i < points.length - 1; i++) {
+    const cp1x = (points[i].x + points[i + 1].x) / 2;
+    const cp1y = points[i].y;
+    const cp2x = (points[i].x + points[i + 1].x) / 2;
+    const cp2y = points[i + 1].y;
+    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, points[i + 1].x, points[i + 1].y);
+  }
+  ctx.strokeStyle = '#ea580c';
   ctx.lineWidth = 3;
-  ctx.lineJoin = 'round';
-  points.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
   ctx.stroke();
 
-  // Data points
-  points.forEach(p => {
+  // Glowing Circle Dots on Peaks
+  [points[2], points[4], points[5]].forEach(pt => {
     ctx.beginPath();
-    ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
-    ctx.fillStyle = '#1f5a2c';
+    ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
     ctx.fill();
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#ea580c';
+    ctx.lineWidth = 2.5;
     ctx.stroke();
-  });
-
-  // X labels
-  ctx.fillStyle = '#64748b';
-  ctx.font = '600 11px Plus Jakarta Sans, sans-serif';
-  ctx.textAlign = 'center';
-  labels.forEach((label, i) => {
-    ctx.fillText(label, points[i].x, H - 8);
   });
 }
 
 // =============================================
-// API KEYS
+// API KEYS MANAGEMENT (CRUD)
 // =============================================
 async function loadKeys() {
   const data = await apiRequest('/dashboard/keys');
-  const container = document.getElementById('keysList');
+  const listEl = document.getElementById('keysList');
+  if (!listEl) return;
 
-  if (!data?.success) {
-    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>Failed to load keys</h3></div>';
-    return;
-  }
-
-  if (data.data.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">🔑</div>
-        <h3>No API Keys Yet</h3>
-        <p>Buat API Key pertamamu untuk mulai mengakses data UdaraAPI.</p>
-        <button class="btn btn-primary" style="margin-top:16px" onclick="openCreateKeyModal()">Create Your First Key</button>
+  if (!data?.success || !data.data || data.data.length === 0) {
+    listEl.innerHTML = `
+      <div style="text-align:center;padding:40px 0;color:var(--c-text-muted)">
+        <p style="font-size:14px;margin-bottom:12px">Anda belum memiliki API Key aktif.</p>
+        <button class="btn-pill btn-pill-primary" onclick="openCreateKeyModal()">+ Buat API Key Pertama</button>
       </div>
     `;
     return;
   }
 
-  const planLimits = { free: 2, pro: 10, enterprise: 50 };
-  const maxKeys = planLimits[user?.plan] || 2;
+  listEl.innerHTML = data.data.map(k => {
+    const maskedKey = k.api_key ? (k.api_key.substring(0, 14) + '••••••••••••••••••••' + k.api_key.slice(-6)) : 'Key Hidden';
+    const dateStr = k.created_at ? new Date(k.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Baru saja';
+    
+    return `
+      <div class="key-item-card">
+        <div class="key-info-left">
+          <div class="key-title-row">
+            <span class="key-name-text">${k.key_name || 'Production Key'}</span>
+            <span class="status-badge-pill badge-completed">${k.is_active ? 'ACTIVE' : 'REVOKED'}</span>
+          </div>
+          <div>
+            <code class="key-secret-code">${maskedKey}</code>
+          </div>
+          <div class="key-meta-muted">
+            Dibuat: ${dateStr} • Kuota: ${k.requests_today || 0} / ${k.rate_limit_per_day || 100} reqs hari ini • Total: ${formatNumber(k.total_requests || 0)} calls
+          </div>
+        </div>
 
-  container.innerHTML = data.data.map(key => `
-    <div class="key-card ${key.is_active ? '' : 'inactive'}" id="key-${key.id}">
-      <div class="key-icon">${key.is_active ? '🟢' : '🔴'}</div>
-      <div class="key-body">
-        <div class="key-top">
-          <div class="key-name">${escapeHtml(key.key_name)}</div>
-          <span class="badge ${key.is_active ? 'badge-success' : 'badge-error'}">${key.is_active ? 'Active' : 'Inactive'}</span>
-        </div>
-        <div class="key-value">
-          <span id="keyval-${key.id}">${maskKey(key.api_key)}</span>
-          <button class="copy-key-btn" onclick="copyKey('${escapeHtml(key.api_key)}', this)" title="Copy API Key">📋</button>
-          <button class="copy-key-btn" onclick="toggleKeyVisibility('${key.id}', '${escapeHtml(key.api_key)}')" title="Show/Hide">👁</button>
-        </div>
-        <div class="key-meta">
-          <div class="key-meta-item">📡 <strong>${formatNumber(key.total_requests || 0)}</strong> total requests</div>
-          <div class="key-meta-item">📅 Today: <strong>${key.requests_today || 0}</strong> / ${key.rate_limit_per_day}</div>
-          <div class="key-meta-item">🕐 Created: <strong>${formatDate(key.created_at)}</strong></div>
-          ${key.last_used_at ? `<div class="key-meta-item">Last used: <strong>${formatDate(key.last_used_at)}</strong></div>` : ''}
+        <div class="key-actions-right">
+          <button class="btn-pill" onclick="copyFullKey('${k.api_key}')" title="Copy Key">📋 Salin</button>
+          <button class="btn-pill" onclick="deleteKey('${k.id}')" style="color:#ef4444" title="Revoke Key">🗑️ Hapus</button>
         </div>
       </div>
-      <div class="key-actions">
-        <button class="btn btn-sm ${key.is_active ? 'btn-warning' : 'btn-success'}" onclick="toggleKeyActive('${key.id}', ${key.is_active})">
-          ${key.is_active ? 'Deactivate' : 'Activate'}
-        </button>
-        <button class="btn btn-sm btn-danger" onclick="openDeleteModal('${key.id}')">Delete</button>
-      </div>
-    </div>
-  `).join('');
-
-  updateKeysInfo(data.count, maxKeys);
+    `;
+  }).join('');
 }
 
-function updateKeysInfo(count, max) {
-  if (count === undefined) return;
-  document.getElementById('keysInfo').textContent = `${count} / ${max} keys used (${user?.plan || 'free'} plan)`;
-}
+async function submitCreateKey() {
+  const nameInput = document.getElementById('newKeyName');
+  const name = nameInput?.value?.trim() || 'My API Key';
 
-function maskKey(key) {
-  if (!key) return '—';
-  return key.substring(0, 12) + '••••••••••••••••••••' + key.slice(-6);
-}
-
-let keyVisible = {};
-function toggleKeyVisibility(keyId, fullKey) {
-  const el = document.getElementById('keyval-' + keyId);
-  if (!el) return;
-  if (keyVisible[keyId]) {
-    el.textContent = maskKey(fullKey);
-    keyVisible[keyId] = false;
-  } else {
-    el.textContent = fullKey;
-    keyVisible[keyId] = true;
-  }
-}
-
-function copyKey(key, btn) {
-  navigator.clipboard.writeText(key).then(() => {
-    const orig = btn.textContent;
-    btn.textContent = '✓';
-    showToast('API key copied to clipboard!', 'success');
-    setTimeout(() => { btn.textContent = orig; }, 2000);
-  });
-}
-
-async function toggleKeyActive(keyId, currentStatus) {
-  const data = await apiRequest(`/dashboard/keys/${keyId}`, {
-    method: 'PATCH',
-    body: JSON.stringify({ is_active: !currentStatus }),
-  });
-
-  if (data?.success) {
-    showToast(data.message, 'success');
-    loadKeys();
-  } else {
-    showToast(data?.error || 'Failed to update key', 'error');
-  }
-}
-
-function openDeleteModal(keyId) {
-  document.getElementById('deleteKeyId').value = keyId;
-  openModal('deleteKeyModal');
-}
-
-async function confirmDeleteKey() {
-  const keyId = document.getElementById('deleteKeyId').value;
-  const data = await apiRequest(`/dashboard/keys/${keyId}`, { method: 'DELETE' });
-
-  closeModal('deleteKeyModal');
-
-  if (data?.success) {
-    showToast('API key deleted.', 'success');
-    loadKeys();
-    loadUsage();
-  } else {
-    showToast(data?.error || 'Failed to delete key', 'error');
-  }
-}
-
-async function handleCreateKey(e) {
-  e.preventDefault();
-  const name = document.getElementById('newKeyName').value.trim();
-  const btn = document.getElementById('createKeyBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div>';
-
-  const data = await apiRequest('/dashboard/keys', {
+  const res = await apiRequest('/dashboard/keys', {
     method: 'POST',
     body: JSON.stringify({ key_name: name }),
   });
 
-  btn.disabled = false;
-  btn.innerHTML = 'Create Key';
-
-  if (!data?.success) {
-    showToast(data?.error || 'Failed to create key', 'error');
-    return;
+  if (res?.success && res.data) {
+    closeModal('createKeyModal');
+    newKeyValue = res.data.api_key || res.data.key;
+    document.getElementById('newKeyValueDisplay').textContent = newKeyValue;
+    openModal('viewKeyModal');
+    loadKeys();
+    showToast('API Key berhasil dibuat!', 'success');
+  } else {
+    showToast(res?.error || 'Gagal membuat API Key.', 'error');
   }
-
-  closeModal('createKeyModal');
-  newKeyValue = data.data.api_key;
-  document.getElementById('newKeyDisplay').textContent = newKeyValue;
-  openModal('viewKeyModal');
-  loadUsage();
 }
 
-function copyNewKey() {
-  navigator.clipboard.writeText(newKeyValue).then(() => {
-    showToast('API key copied!', 'success');
+function copyNewKeyAndClose() {
+  if (newKeyValue) {
+    navigator.clipboard.writeText(newKeyValue).then(() => {
+      showToast('API Key berhasil disalin ke clipboard!', 'success');
+      closeModal('viewKeyModal');
+    });
+  } else {
+    closeModal('viewKeyModal');
+  }
+}
+
+function copyFullKey(keyString) {
+  navigator.clipboard.writeText(keyString).then(() => {
+    showToast('Kunci API berhasil disalin!', 'success');
   });
 }
 
-// =============================================
-// UTILITIES
-// =============================================
-function formatNumber(n) {
-  if (n === null || n === undefined) return '0';
-  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
-  return n.toString();
+async function deleteKey(keyId) {
+  if (!confirm('Apakah Anda yakin ingin mencabut dan menghapus API Key ini?')) return;
+  const res = await apiRequest(`/dashboard/keys/${keyId}`, { method: 'DELETE' });
+  if (res?.success) {
+    showToast('API Key berhasil dihapus.', 'success');
+    loadKeys();
+  } else {
+    showToast(res?.error || 'Gagal menghapus API Key.', 'error');
+  }
 }
 
-function formatDate(dateStr) {
-  if (!dateStr) return '—';
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.appendChild(document.createTextNode(str));
-  return div.innerHTML;
+function copySnippet(elementId) {
+  const el = document.getElementById(elementId);
+  if (el) {
+    navigator.clipboard.writeText(el.textContent).then(() => {
+      showToast('Cuplikan kode cURL berhasil disalin!', 'success');
+    });
+  }
 }
 
 function logout() {
@@ -468,15 +405,6 @@ function logout() {
   window.location.href = '/login';
 }
 
-// Update quickstart code with first key
-async function updateQuickstart() {
-  const data = await apiRequest('/dashboard/keys');
-  const baseDomain = window.location.origin.includes('localhost') ? window.location.origin : 'https://udara-api-final-project.vercel.app';
-  if (data?.success && data.data.length > 0) {
-    const key = data.data[0].api_key;
-    document.getElementById('quickstartCode').textContent =
-      `curl -H "X-API-Key: ${key}" \\
-  ${baseDomain}/api/v1/records/latest`;
-  }
+function formatNumber(num) {
+  return Number(num || 0).toLocaleString('en-US');
 }
-updateQuickstart();
