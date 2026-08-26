@@ -99,7 +99,7 @@
   text-decoration: none;
   white-space: nowrap;
   padding: 7px 14px;
-  border-radius: 9999px;
+  border-radius: 6px;
   transition: all 0.25s ease;
 }
 
@@ -176,7 +176,7 @@
 
 .hero-photo-card {
   position: relative;
-  border-radius: 14px;
+  border-radius: 8px;
   overflow: hidden;
   height: 250px;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
@@ -406,7 +406,7 @@
 .vp-slot {
   flex: 1;
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 6px;
   border: 1px solid var(--cgem-gray-border);
   overflow: hidden;
   position: relative;
@@ -774,7 +774,7 @@
 .footer-architect-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(249, 115, 22, 0.25);
-  border-radius: 12px;
+  border-radius: 6px;
   padding: 16px 20px;
   margin-top: 20px;
   display: flex;
@@ -834,7 +834,7 @@
   gap: 12px;
   background: rgba(249, 115, 22, 0.04);
   border: 1px solid rgba(249, 115, 22, 0.15);
-  border-radius: 9999px;
+  border-radius: 6px;
   padding: 8px 20px;
   transition: all 0.25s ease;
   max-width: fit-content;
@@ -853,7 +853,7 @@
   color: #c2410c;
   background: rgba(249, 115, 22, 0.12);
   padding: 3px 10px;
-  border-radius: 9999px;
+  border-radius: 6px;
   white-space: nowrap;
   letter-spacing: 0.02em;
 }
@@ -925,7 +925,7 @@
 .pray-region-card {
   background: #1f1612;
   border: 1px solid rgba(249, 115, 22, 0.2);
-  border-radius: 12px;
+  border-radius: 6px;
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -997,7 +997,7 @@
 .pray-interactive-box {
   background: #1c1410;
   border: 1.5px solid rgba(249, 115, 22, 0.35);
-  border-radius: 16px;
+  border-radius: 8px;
   padding: 36px;
   display: grid;
   grid-template-columns: 1fr 1.6fr;
@@ -1280,7 +1280,7 @@
   background: rgba(14, 38, 23, 0.96);
   backdrop-filter: blur(16px);
   border: 1.5px solid rgba(200, 232, 106, 0.4);
-  border-radius: 16px;
+  border-radius: 8px;
   padding: 16px 20px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
   width: 320px;
@@ -1423,7 +1423,7 @@
   gap: 6px;
   background: rgba(0, 0, 0, 0.25);
   padding: 6px 10px;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 

@@ -1,10 +1,11 @@
 /* ===================================================
    UdaraAPI — Wildfire, Smoke & Karhutla Telemetry Design System
-   Palette: Flame Ember Orange (#EA580C, #F97316), Fiery Gold (#F59E0B, #FBBF24),
-   Smoked Charcoal (#0F172A, #181210), Clean Warm Slate (#FAFAF9), Crisp White (#FFF)
+   Style: Authoritative, Structured, Sharp & Tactical (Gagah & Tegas)
+   Palette: Flame Ember Orange (#EA580C, #F97316), Smoked Charcoal (#0F172A),
+   Clean Slate (#F8FAFC), Crisp White (#FFFFFF)
    =================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap');
 
 :root {
   /* Wildfire & Flame Signature Colors */
@@ -14,26 +15,26 @@
   --cgem-lime: #f97316;               /* Radiant Ember Accent */
   --cgem-lime-light: #fff7ed;         /* Soft Fireglow Tint */
   --cgem-sage-bg: #fef3c7;            /* Warm Amber Ash Tint */
-  --cgem-cream-bg: #fafaf9;           /* Pure Clean Slate Light Background */
+  --cgem-cream-bg: #f8fafc;           /* Pure Clean Slate Light Background */
   
   /* Fire/Asap Alert Colors */
   --cgem-terracotta: #ea580c;
   --cgem-terracotta-dark: #9a3412;
   --cgem-terracotta-light: #ffedd5;
-  --cgem-amber: #f59e0b;
+  --cgem-amber: #d97706;
   --cgem-danger: #dc2626;
 
   /* Neutral Dark Charcoal Shades */
   --cgem-dark: #0f172a;
   --cgem-gray-dark: #1e293b;
-  --cgem-gray-muted: #64748b;
+  --cgem-gray-muted: #475569;
   --cgem-gray-subtle: #94a3b8;
   --cgem-gray-border: #e2e8f0;
   --cgem-white: #ffffff;
 
   /* ISPU Semantic Standards */
-  --ispu-baik: #10b981;
-  --ispu-sedang: #f59e0b;
+  --ispu-baik: #059669;
+  --ispu-sedang: #d97706;
   --ispu-tidak-sehat: #ea580c;
   --ispu-sangat-ts: #dc2626;
   --ispu-berbahaya: #7f1d1d;
@@ -43,17 +44,17 @@
   --font-display: 'Space Grotesk', -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Radius & Shadows */
-  --radius-xs: 8px;
-  --radius-sm: 12px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-full: 9999px;
+  /* Structured, Sharp & Tactical Radiuses (Gagah & Tegas) */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-full: 6px;
 
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03);
-  --shadow-md: 0 8px 24px rgba(234, 88, 12, 0.1);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.06);
-  --shadow-hover: 0 20px 48px rgba(234, 88, 12, 0.16);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 16px rgba(234, 88, 12, 0.1);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 24px rgba(234, 88, 12, 0.18);
 }
 
 /* Global Reset */
@@ -79,7 +80,7 @@ body {
 /* Container */
 .container {
   width: 100%;
-  max-width: 1260px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -88,7 +89,7 @@ body {
 h1, h2, h3, h4, .font-display {
   font-family: var(--font-display);
   color: var(--cgem-dark);
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.02em;
 }
 
@@ -96,15 +97,15 @@ h1, h2, h3, h4, .font-display {
 .sticky-alert-bar {
   background: #0f172a;
   color: #ffedd5;
-  padding: 9px 16px;
+  padding: 8px 16px;
   text-align: center;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12.5px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  border-bottom: 1px solid #7c2d12;
+  border-bottom: 1.5px solid #7c2d12;
 }
 
 .sticky-alert-badge {
@@ -113,23 +114,23 @@ h1, h2, h3, h4, .font-display {
   font-size: 10px;
   font-family: var(--font-mono);
   font-weight: 800;
-  padding: 3px 10px;
-  border-radius: 9999px;
+  padding: 2.5px 8px;
+  border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.4);
+  border: 1px solid #f87171;
 }
 
 /* Wildfire Theme Badges */
 .cgem-badge {
   background: #ffedd5;
   color: #c2410c;
-  border: 1px solid #fed7aa;
+  border: 1.5px solid #fed7aa;
   font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
-  padding: 6px 16px;
-  border-radius: 9999px;
+  letter-spacing: 0.06em;
+  padding: 5px 12px;
+  border-radius: 6px;
   display: inline-block;
   text-transform: uppercase;
   font-family: var(--font-sans);
@@ -138,12 +139,13 @@ h1, h2, h3, h4, .font-display {
 .cgem-badge-terracotta {
   background: #fee2e2;
   color: #b91c1c;
-  border: 1px solid #fecaca;
+  border: 1.5px solid #fecaca;
 }
 
 .cgem-badge-danger {
   background: #7f1d1d;
   color: #fef2f2;
+  border: 1.5px solid #991b1b;
 }
 
 /* Wildfire Theme Buttons */
@@ -153,41 +155,41 @@ h1, h2, h3, h4, .font-display {
   justify-content: center;
   gap: 8px;
   font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 700;
-  padding: 10px 22px;
-  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 9px 20px;
+  border-radius: 6px;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.15s ease;
   border: 1.5px solid transparent;
   white-space: nowrap;
+  letter-spacing: 0.02em;
 }
 
 .btn-primary {
   background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 10px rgba(234, 88, 12, 0.3);
+  border: 1px solid #ea580c;
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(234, 88, 12, 0.45);
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(234, 88, 12, 0.4);
 }
 
 .btn-terracotta {
   background: #7c2d12;
   color: #ffedd5;
-  border: 1px solid #9a3412;
-  box-shadow: 0 4px 14px rgba(124, 45, 18, 0.25);
+  border: 1.5px solid #9a3412;
+  box-shadow: 0 2px 10px rgba(124, 45, 18, 0.25);
 }
 
 .btn-terracotta:hover {
   background: #9a3412;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(124, 45, 18, 0.4);
+  transform: translateY(-1px);
 }
 
 .btn-ghost {
@@ -200,18 +202,18 @@ h1, h2, h3, h4, .font-display {
   border-color: #ea580c;
   color: #ea580c;
   background: #fff7ed;
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .btn-sm {
-  padding: 8px 16px;
-  font-size: 13px;
+  padding: 7px 14px;
+  font-size: 12px;
 }
 
 .btn-lg {
-  padding: 15px 32px;
-  font-size: 15px;
-  font-weight: 700;
+  padding: 13px 26px;
+  font-size: 14.5px;
+  font-weight: 800;
 }
 
 .btn-full { width: 100%; }
@@ -221,81 +223,29 @@ h1, h2, h3, h4, .font-display {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  text-align: left;
+  margin-bottom: 16px;
 }
 
 .form-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--cgem-gray-dark);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--cgem-dark);
 }
 
 .form-input {
   width: 100%;
-  padding: 12px 16px;
+  padding: 10px 14px;
   background: #ffffff;
   border: 1.5px solid var(--cgem-gray-border);
-  border-radius: var(--radius-sm);
-  color: var(--cgem-dark);
+  border-radius: 6px;
+  font-size: 13.5px;
   font-family: var(--font-sans);
-  font-size: 14px;
+  color: var(--cgem-dark);
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.15s ease;
 }
 
 .form-input:focus {
-  border-color: var(--cgem-forest);
-  box-shadow: 0 0 0 3px rgba(31, 90, 44, 0.12);
-}
-
-/* Toast */
-#toastContainer {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.toast {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #1f5a2c;
-  border: 1px solid #2d5a27;
-  padding: 14px 20px;
-  border-radius: var(--radius-sm);
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 500;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-  animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.toast-error { background: #b91c1c; border-color: #991b1b; }
-
-@keyframes slideIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; transform: scale(1); }
-  to { opacity: 0; transform: scale(0.95); }
-}
-
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  display: inline-block;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
+  border-color: var(--cgem-forest-light);
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
 }
